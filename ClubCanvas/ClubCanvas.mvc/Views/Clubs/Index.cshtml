@@ -1,0 +1,15 @@
+@model List<ClubCanvas.mvc.Models.Club>
+
+<h2>Clubs</h2>
+
+<ul>
+@foreach (var club in Model)
+{
+    <li>
+        <a asp-controller="Clubs" asp-action="Details" asp-route-id="@club.Id">@club.Name</a>
+        <span> — @club.Description</span>
+    </li>
+}
+</ul>
+
+

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ClubCanvas.mvc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1faa12ca1d4fe665de44b3775c2207c48d12e84d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+84508b0667d920e6622d43a1ddf135065b90fa07")]
 [assembly: System.Reflection.AssemblyProductAttribute("ClubCanvas.mvc")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ClubCanvas.mvc")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
