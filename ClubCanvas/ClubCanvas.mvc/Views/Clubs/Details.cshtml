@@ -9,25 +9,43 @@
         <p class="mb-4">@Model.Description</p>
 
         <div class="mb-4">
-            <p><strong>Owner:</strong> @Model.Owner</p>
+            @if (Model.Owner != null)
+            {
+                <p><strong>Owner:</strong> @Model.Owner.Username (@Model.Owner.Email)</p>
+            }
+            else
+            {
+                <p><strong>Owner:</strong> Not specified</p>
+            }
             <p><strong>Members:</strong> @(Model.Members?.Count ?? 0)</p>
         </div>
 
         <div>
             <h3 class="mb-3"><strong>Upcoming Events</strong></h3>
-            <ul class="list-unstyled">
             @if (Model.Events != null && Model.Events.Count > 0)
             {
-                foreach (var e in Model.Events)
+                <ul class="list-unstyled">
+                @foreach (var e in Model.Events)
                 {
-                    <li class="mb-2"><strong>@e</strong></li>
+                    <li class="mb-3 p-3 border rounded">
+                        <strong>@e.Name</strong>
+                        @if (!string.IsNullOrEmpty(e.Description))
+                        {
+                            <p class="mb-1 mt-2">@e.Description</p>
+                        }
+                        <p class="mb-1"><strong>Date:</strong> @e.EventDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
+                        @if (!string.IsNullOrEmpty(e.Location))
+                        {
+                            <p class="mb-0"><strong>Location:</strong> @e.Location</p>
+                        }
+                    </li>
                 }
+                </ul>
             }
             else
             {
-                <li class="mb-2">No events yet</li>
+                <p>No events yet</p>
             }
-            </ul>
         </div>
 
         <div class="mt-4">
