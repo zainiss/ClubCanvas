@@ -1,31 +1,32 @@
 @model ClubCanvas.mvc.Models.Event
 
-<div class="text-center mb-5">
-    <h2 class="mb-4"><strong>@Model.Name</strong></h2>
-</div>
-
-<div class="d-flex justify-content-center">
-    <div class="text-center" style="max-width: 800px; width: 100%;">
-        <h>@Model.Name</h>
+<div class="container-fluid d-flex justify-content-center">
+    <div class="text-center mb-5" style="max-width: 800px; width: 100%;">
+        <h2 class="mb-4"><strong>@Model.Name &#64;@Model.Location</strong></h2>
+        
         <p class="mb-4">@Model.Description</p>
+        
         <div>
-            <p class="">@Model.Location</p>
-            @if (Model.Attendees != null)
-            {
-                <ul class="list-unstyled">
-                    @foreach (ClubCanvas.mvc.Models.User a in Model.Attendees)
-                    {
-                        <li class="mb-3 p-3 border rounded">
-                            <strong>@a.Username</strong>
-                            <partial>@a.Email</partial>
-                        </li>
-                    }
-                </ul>
-            }
-            else
-            {
-                <p>No events yet</p>
-            }
+            <h2>Attendees:</h2>
+            <div class="d-flex justify-content-center">
+                @if (Model.Attendees != null && Model.Attendees.Any())
+                {
+                    <ul class="list-unstyled" style="max-width: 600px; width: 100%;">
+                        @foreach (var attendee in Model.Attendees)
+                        {
+                            <li class="mb-3 p-3 border rounded text-start">
+                                <strong>@attendee.Username</strong>
+                                <p>@attendee.Email</p>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No attendees yet</p>
+                }
+            </div>
         </div>
+        <button>Register Now</button>
     </div>
 </div>
