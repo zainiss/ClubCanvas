@@ -1,0 +1,31 @@
+@model ClubCanvas.mvc.Models.Event
+
+<div class="text-center mb-5">
+    <h2 class="mb-4"><strong>@Model.Name</strong></h2>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="text-center" style="max-width: 800px; width: 100%;">
+        <h>@Model.Name</h>
+        <p class="mb-4">@Model.Description</p>
+        <div>
+            <p class="">@Model.Location</p>
+            @if (Model.Attendees != null)
+            {
+                <ul class="list-unstyled">
+                    @foreach (ClubCanvas.mvc.Models.User a in Model.Attendees)
+                    {
+                        <li class="mb-3 p-3 border rounded">
+                            <strong>@a.Username</strong>
+                            <partial>@a.Email</partial>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No events yet</p>
+            }
+        </div>
+    </div>
+</div>

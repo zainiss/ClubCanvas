@@ -45,7 +45,7 @@ public class HomeController : Controller
             {
                 if (targetLogin.Password == user.Password)
                 {
-                    return RedirectToAction("Index", "Clubs");
+                    return RedirectToAction("Index", "ClubCanvas");
                 }
             }
         }

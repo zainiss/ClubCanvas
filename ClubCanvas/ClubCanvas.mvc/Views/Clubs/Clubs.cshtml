@@ -10,7 +10,7 @@
         @foreach (var club in Model)
         {
             <li class="mb-3 p-3 border rounded">
-                <a asp-controller="Clubs" asp-action="Details" asp-route-id="@club.Id" class="text-decoration-none">
+                <a asp-controller="Clubs" asp-action="ClubDetails" asp-route-id="@club.Id" class="text-decoration-none">
                     <strong>@club.Name</strong>
                 </a>
                 <p class="mb-0 mt-2">@club.Description</p>
