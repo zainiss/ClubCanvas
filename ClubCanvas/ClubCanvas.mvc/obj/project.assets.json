@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/hugh/MEGA/Projects/Enterprise PROG/GroupProject1/ClubCanvas/ClubCanvas/ClubCanvas.mvc/ClubCanvas.mvc.csproj",
+      "projectUniqueName": "/Users/hugh/MEGA/Projects/Enterprise PROG/GroupProjectIteration1/ClubCanvas/ClubCanvas/ClubCanvas.mvc/ClubCanvas.mvc.csproj",
       "projectName": "ClubCanvas.mvc",
-      "projectPath": "/Users/hugh/MEGA/Projects/Enterprise PROG/GroupProject1/ClubCanvas/ClubCanvas/ClubCanvas.mvc/ClubCanvas.mvc.csproj",
+      "projectPath": "/Users/hugh/MEGA/Projects/Enterprise PROG/GroupProjectIteration1/ClubCanvas/ClubCanvas/ClubCanvas.mvc/ClubCanvas.mvc.csproj",
       "packagesPath": "/Users/hugh/.nuget/packages/",
-      "outputPath": "/Users/hugh/MEGA/Projects/Enterprise PROG/GroupProject1/ClubCanvas/ClubCanvas/ClubCanvas.mvc/obj/",
+      "outputPath": "/Users/hugh/MEGA/Projects/Enterprise PROG/GroupProjectIteration1/ClubCanvas/ClubCanvas/ClubCanvas.mvc/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/hugh/.nuget/NuGet/NuGet.Config"
