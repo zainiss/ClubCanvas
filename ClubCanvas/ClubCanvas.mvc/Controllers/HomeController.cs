@@ -18,6 +18,19 @@ public class HomeController : Controller
         return View();
     }
 
+
+    // [HttpPost]
+    // [Route("LogIn")]
+    // public ViewResult LogIn(User user)
+    // {
+    //     if (ModelState.IsValid)
+    //     {
+    //         return View();
+    //     }
+
+    //     return View(user);
+    // }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

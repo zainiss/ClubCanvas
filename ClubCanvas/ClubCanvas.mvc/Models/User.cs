@@ -22,7 +22,7 @@ namespace ClubCanvas.mvc.Models
         
         void ValidPassword()
         {
-
+            
         }
         
         void ValidEmail()
