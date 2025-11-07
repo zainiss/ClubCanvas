@@ -1,27 +1,39 @@
 @model ClubCanvas.mvc.Models.Club
 
-<h2>@Model.Name</h2>
+<div class="text-center mb-5">
+    <h2 class="mb-4"><strong>@Model.Name</strong></h2>
+</div>
 
-<p>@Model.Description</p>
+<div class="d-flex justify-content-center">
+    <div class="text-center" style="max-width: 800px; width: 100%;">
+        <p class="mb-4">@Model.Description</p>
 
-<p><strong>Owner:</strong> @Model.Owner</p>
-<p><strong>Members:</strong> @(Model.Members?.Count ?? 0)</p>
+        <div class="mb-4">
+            <p><strong>Owner:</strong> @Model.Owner</p>
+            <p><strong>Members:</strong> @(Model.Members?.Count ?? 0)</p>
+        </div>
 
-<h3>Upcoming Events</h3>
-<ul>
-@if (Model.Events != null && Model.Events.Count > 0)
-{
-    foreach (var e in Model.Events)
-    {
-        <li>@e</li>
-    }
-}
-else
-{
-    <li>No events yet</li>
-}
-</ul>
+        <div>
+            <h3 class="mb-3"><strong>Upcoming Events</strong></h3>
+            <ul class="list-unstyled">
+            @if (Model.Events != null && Model.Events.Count > 0)
+            {
+                foreach (var e in Model.Events)
+                {
+                    <li class="mb-2"><strong>@e</strong></li>
+                }
+            }
+            else
+            {
+                <li class="mb-2">No events yet</li>
+            }
+            </ul>
+        </div>
 
-<p><a asp-controller="Clubs" asp-action="Index">Back to list</a></p>
+        <div class="mt-4">
+            <a asp-controller="Clubs" asp-action="Index" class="btn btn-secondary">Back to list</a>
+        </div>
+    </div>
+</div>
 
 
