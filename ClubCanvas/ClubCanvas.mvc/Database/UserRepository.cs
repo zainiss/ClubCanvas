@@ -10,6 +10,15 @@ namespace ClubCanvas.mvc.Database
     {
         private readonly List<User> _users;
 
+        public UserRepository()
+        {
+            _users = new List<User>
+            {
+                new User { Email = "h@g.com", Username = "H" , Password = "g" },
+                new User { Email = "admin@example.com", Username = "a", Password = "123" }
+            };
+        }
+
         public List<User> GetAllUsers()
         {
             return _users;

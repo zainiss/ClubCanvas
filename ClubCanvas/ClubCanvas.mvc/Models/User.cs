@@ -9,16 +9,18 @@ namespace ClubCanvas.mvc.Models
 {
     public class User
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public string Username { get; set; }
+        [EmailAddress]
+        public string? Email { get; set; }
+
+        [Required]
+        public string? Username { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
         
         void ValidPassword()
         {

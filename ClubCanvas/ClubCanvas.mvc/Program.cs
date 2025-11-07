@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IClubsRepository, ClubsRepository>();
-//builder.Services.AddScoped<IRequestRepository, EFRequestRepository>();
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
 
 var app = builder.Build();
