@@ -36,7 +36,7 @@ public class ClubsController : Controller
         var clubs = _clubs.GetAllClubs();
         return View(clubs);
     }
-    
+
     [Route("EventDetails")]
     public IActionResult EventDetails(int id)
     {
@@ -51,5 +51,12 @@ public class ClubsController : Controller
             }
         }
         return NotFound();
+    }
+
+
+    [Route("Canvas")]
+    public IActionResult Canvas()
+    {
+        return View();
     }
 }
