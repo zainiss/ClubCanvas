@@ -1,0 +1,57 @@
+@model ClubCanvas.Core.Models.Club
+
+<div class="text-center mb-5">
+    <h2 class="mb-4"><strong>@Model.Name</strong></h2>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="text-center" style="max-width: 800px; width: 100%;">
+        <p class="mb-4">@Model.Description</p>
+
+        <div class="mb-4">
+            @if (Model.Owner != null)
+            {
+                <p><strong>Owner:</strong> @Model.Owner.Username (@Model.Owner.Email)</p>
+            }
+            else
+            {
+                <p><strong>Owner:</strong> Not specified</p>
+            }
+            <p><strong>Members:</strong> @(Model.Members?.Count ?? 0)</p>
+        </div>
+
+        <div>
+            <h3 class="mb-3"><strong>Upcoming Events</strong></h3>
+            @if (Model.Events != null && Model.Events.Count > 0)
+            {
+                <ul class="list-unstyled">
+                @foreach (var e in Model.Events)
+                {
+                    <li class="mb-3 p-3 border rounded">
+                        <strong>@e.Name</strong>
+                        @if (!string.IsNullOrEmpty(e.Description))
+                        {
+                            <p class="mb-1 mt-2">@e.Description</p>
+                        }
+                        <p class="mb-1"><strong>Date:</strong> @e.EventDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
+                        @if (!string.IsNullOrEmpty(e.Location))
+                        {
+                            <p class="mb-0"><strong>Location:</strong> @e.Location</p>
+                        }
+                    </li>
+                }
+                </ul>
+            }
+            else
+            {
+                <p>No events yet</p>
+            }
+        </div>
+
+        <div class="mt-4">
+            <a asp-controller="Clubs" asp-action="Clubs" class="btn btn-secondary">Back to list</a>
+        </div>
+    </div>
+</div>
+
+

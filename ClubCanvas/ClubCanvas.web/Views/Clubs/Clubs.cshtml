@@ -1,0 +1,23 @@
+@model List<ClubCanvas.Core.Models.Club>
+
+<div class="text-center mb-5">
+    <h2 class="mb-4"><strong>Clubs</strong></h2>
+</div>
+
+<div class="d-flex justify-content-center">
+    <div class="text-center" style="max-width: 800px; width: 100%;">
+        <ul class="list-unstyled">
+        @foreach (var club in Model)
+        {
+            <li class="mb-3 p-3 border rounded">
+                <a asp-controller="Clubs" asp-action="ClubDetails" asp-route-id="@club.Id" class="text-decoration-none">
+                    <strong>@club.Name</strong>
+                </a>
+                <p class="mb-0 mt-2">@club.Description</p>
+            </li>
+        }
+        </ul>
+    </div>
+</div>
+
+

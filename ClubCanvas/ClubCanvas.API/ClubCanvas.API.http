@@ -1,0 +1,6 @@
+@ClubCanvas.API_HostAddress = http://localhost:5076
+
+GET {{ClubCanvas.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
