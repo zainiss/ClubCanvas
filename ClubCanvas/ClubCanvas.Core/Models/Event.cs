@@ -12,14 +12,14 @@ namespace ClubCanvas.Core.Models
         public string? Description { get; set; }
         public DateTime EventDate { get; set; }
         public string? Location { get; set; }
-        public List<User> Attendees { get; set; }
+        public List<ApplicationUser> Attendees { get; set; }
 
-        public void AddAttendee(User user)
+        public void AddAttendee(ApplicationUser user)
         {
             Attendees.Add(user);
         }
 
-        public void RemoveAttendee(User user)
+        public void RemoveAttendee(ApplicationUser user)
         {
             foreach (var checkUser in Attendees)
             {

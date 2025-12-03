@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace ClubCanvas.Core.Models;
 
 public class Club
@@ -9,11 +10,11 @@ public class Club
     public string Name { get; set; }
     public string Description { get; set; }
     public List<Event> Events { get; set; }
-    public List<User> Members { get; set; }
-    public User Owner { get; set; }
+    public List<ApplicationUser> Members { get; set; }
+    public ApplicationUser Owner { get; set; }
     public string Image { get; set; }
 
-    public void AddMember(User member)
+    public void AddMember(ApplicationUser member)
     {
         if (member == null)
         {
@@ -22,7 +23,7 @@ public class Club
 
         if (Members == null)
         {
-            Members = new List<User>();
+            Members = new List<ApplicationUser>();
         }
 
         // Check if member already exists
@@ -32,7 +33,7 @@ public class Club
         }
     }
 
-    public void RemoveMember(User member)
+    public void RemoveMember(ApplicationUser member)
     {
         if (member == null || Members == null)
         {

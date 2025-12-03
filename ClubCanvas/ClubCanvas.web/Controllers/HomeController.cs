@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
+using ClubCanvas.web.Models;
 
 namespace ClubCanvas.web.Controllers;
 
@@ -26,7 +27,7 @@ public class HomeController : Controller
     public IActionResult Login()
     {
         Console.WriteLine("loginh");
-        foreach(User u in _users.GetAllUsers())
+        foreach(ApplicationUser u in _users.GetAllUsers())
         {
             Console.WriteLine(u.Email);
         }
@@ -36,21 +37,20 @@ public class HomeController : Controller
 
     [HttpPost]
     [Route("Login")]
-    public IActionResult Login(User user)
+    public IActionResult Login(LoginViewModel model)
     {
         if (ModelState.IsValid)
         {
-            User targetLogin = _users.GetUserByEmail(user.Email);
+            ApplicationUser targetLogin = _users.GetUserByEmail(model.Email);
             if (targetLogin != null)
             {
-                if (targetLogin.Password == user.Password)
-                {
-                    return RedirectToAction("Clubs", "Clubs");
-                }
+                // TODO: Replace with Identity password verification when Identity is fully integrated
+                // For now, this is a placeholder - Identity will handle password verification
+                return RedirectToAction("Clubs", "Clubs");
             }
         }
 
-        return View(user);
+        return View(model);
     }
     
     [HttpGet]
@@ -62,16 +62,16 @@ public class HomeController : Controller
 
     [HttpPost]
     [Route("Signup")]
-    public IActionResult Signup(User user)
+    public IActionResult Signup(SignupViewModel model)
     {
         if (ModelState.IsValid)
         {
-            List<User> allUsers = _users.GetAllUsers();
+            List<ApplicationUser> allUsers = _users.GetAllUsers();
 
             bool emailUsed = false;
-            foreach (User u in allUsers)
+            foreach (ApplicationUser u in allUsers)
             {
-                if (user.Email == u.Email)
+                if (model.Email == u.Email)
                 {
                     emailUsed = true;
                     break;
@@ -80,8 +80,14 @@ public class HomeController : Controller
             
             if (emailUsed == false)
             {
-                _users.AddUser(user);
-                foreach(User u in _users.GetAllUsers())
+                var newUser = new ApplicationUser
+                {
+                    Email = model.Email,
+                    UserName = model.UserName
+                    // Password will be handled by Identity UserManager
+                };
+                _users.AddUser(newUser);
+                foreach(ApplicationUser u in _users.GetAllUsers())
                 {
                     Console.WriteLine(u.Email);
                 }
@@ -89,7 +95,7 @@ public class HomeController : Controller
             }
         }
 
-        return View(user);
+        return View(model);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

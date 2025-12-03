@@ -5,10 +5,10 @@ namespace ClubCanvas.Core
 {
     public interface IUserRepository
     {
-        List<User> GetAllUsers();
-        User GetUserByEmail(string email);
-        void AddUser(User user);
-        void UpdateUser(User user);
-        void DeleteUser(User user);
+        List<ApplicationUser> GetAllUsers();
+        ApplicationUser GetUserByEmail(string email);
+        void AddUser(ApplicationUser user);
+        void UpdateUser(ApplicationUser user);
+        void DeleteUser(ApplicationUser user);
     }
 }

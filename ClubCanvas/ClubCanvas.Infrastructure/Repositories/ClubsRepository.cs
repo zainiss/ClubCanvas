@@ -76,18 +76,16 @@ internal static class ClubsSeed
 {
     public static List<Club> Create()
     {
-        var daniel = new User 
+        var daniel = new ApplicationUser 
         { 
             Email = "daniel@example.com", 
-            Username = "daniel", 
-            Password = "password123" 
+            UserName = "daniel"
         };
         
-        var sarah = new User 
+        var sarah = new ApplicationUser 
         { 
             Email = "sarah@example.com", 
-            Username = "sarah", 
-            Password = "password123" 
+            UserName = "sarah"
         };
 
         return new List<Club>
@@ -105,7 +103,7 @@ internal static class ClubsSeed
                         Description = "Join us for a photography walk in the park", 
                         EventDate = DateTime.Now.AddDays(7), 
                         Location = "Central Park",
-                        Attendees = new List<User>()
+                        Attendees = new List<ApplicationUser>()
                     },
                     new Event 
                     { 
@@ -114,10 +112,10 @@ internal static class ClubsSeed
                         Description = "Learn portrait photography techniques", 
                         EventDate = DateTime.Now.AddDays(14), 
                         Location = "Studio A",
-                        Attendees = new List<User>()
+                        Attendees = new List<ApplicationUser>()
                     }
                 }, 
-                Members = new List<User> { sarah, daniel }, 
+                Members = new List<ApplicationUser> { sarah, daniel }, 
                 Owner = daniel, 
                 Description = "We take photos.", 
                 Image = "photography.png" 
@@ -135,10 +133,10 @@ internal static class ClubsSeed
                         Description = "Super Smash Bros tournament", 
                         EventDate = DateTime.Now.AddDays(3), 
                         Location = "Game Room",
-                        Attendees = new List<User>()
+                        Attendees = new List<ApplicationUser>()
                     }
                 }, 
-                Members = new List<User> { sarah }, 
+                Members = new List<ApplicationUser> { sarah }, 
                 Owner = sarah, 
                 Description = "Games and tournaments.", 
                 Image = "gaming.png" 

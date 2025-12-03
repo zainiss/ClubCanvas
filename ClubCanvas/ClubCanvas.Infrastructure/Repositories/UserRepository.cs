@@ -7,34 +7,34 @@ namespace ClubCanvas.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<User> _users;
+        private readonly List<ApplicationUser> _users;
 
         public UserRepository()
         {
-            _users = new List<User>
+            _users = new List<ApplicationUser>
             {
-                new User { Email = "h@g.com", Username = "H" , Password = "g" },
-                new User { Email = "admin@example.com", Username = "a", Password = "123" }
+                new ApplicationUser { Email = "h@g.com", UserName = "H" },
+                new ApplicationUser { Email = "admin@example.com", UserName = "a" }
             };
         }
 
-        public List<User> GetAllUsers()
+        public List<ApplicationUser> GetAllUsers()
         {
             return _users;
         }
-        public User GetUserByEmail(string email)
+        public ApplicationUser GetUserByEmail(string email)
         {
             return _users.FirstOrDefault(u => u.Email == email);
         }
-        public void AddUser(User user)
+        public void AddUser(ApplicationUser user)
         {
             _users.Add(user);
         }
-        public void UpdateUser(User updatedUser)
+        public void UpdateUser(ApplicationUser updatedUser)
         {
             if (updatedUser != null)
             {
-                User userToUpdate = _users.FirstOrDefault(u => u.Email == updatedUser.Email);
+                ApplicationUser userToUpdate = _users.FirstOrDefault(u => u.Email == updatedUser.Email);
 
                 if (userToUpdate != null)
                 {
@@ -42,7 +42,7 @@ namespace ClubCanvas.Infrastructure.Repositories
                 }
             }
         }
-        public void DeleteUser(User user)
+        public void DeleteUser(ApplicationUser user)
         {
             var userToRemove = _users.FirstOrDefault(u => u.Email == user.Email);
             if (userToRemove != null)

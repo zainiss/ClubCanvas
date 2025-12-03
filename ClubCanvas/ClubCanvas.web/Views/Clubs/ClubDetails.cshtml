@@ -11,7 +11,7 @@
         <div class="mb-4">
             @if (Model.Owner != null)
             {
-                <p><strong>Owner:</strong> @Model.Owner.Username (@Model.Owner.Email)</p>
+                <p><strong>Owner:</strong> @Model.Owner.UserName (@Model.Owner.Email)</p>
             }
             else
             {
@@ -23,7 +23,7 @@
                 <ul class="list-unstyled">
                 @foreach (var member in Model.Members)
                 {
-                    <li>@member.Username (@member.Email)</li>
+                    <li>@member.UserName (@member.Email)</li>
                 }
                 </ul>
             }

@@ -1,4 +1,4 @@
-﻿@model ClubCanvas.Core.Models.User;
+﻿@model ClubCanvas.web.Models.LoginViewModel;
 
 <div class="text-center">
     <h1 class="display-4">Welcome To Club Canvas</h1>
@@ -10,13 +10,9 @@
                 <label asp-for="Email" class="form-label">Your email:</label>
                 <input asp-for="Email" class="form-control" placeholder="Ex. JohnDoe@gmail.com"/>
             </div>
-            <div class="form-group" id="form-div">
-                <label asp-for="Username" class="form-label">Your name:</label>
-                <input asp-for="Username" class="form-control" placeholder="Ex. John"/>
-            </div>
             <div class="form-group">
                 <label asp-for="Password" class="form-label">Your password:</label>
-                <input asp-for="Password" class="form-control" placeholder="Password"/>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Password"/>
             </div>
             <button type="submit" class="btn btn-primary">Log In</button>
         </form>
