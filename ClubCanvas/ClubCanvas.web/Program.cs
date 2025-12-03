@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using ClubCanvas.Core;
 using ClubCanvas.Infrastructure.Repositories;
+using ClubCanvas.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +15,12 @@ builder.Services.AddHttpClient("ClubCanvasAPI", client =>
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Temporary: Keep UserRepository for HomeController until we add Identity
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IClubsRepository, ClubsRepository>();
+//builder.Services.AddScoped<IEventsRepository, EventsRepository>();
 
 
 var app = builder.Build();
