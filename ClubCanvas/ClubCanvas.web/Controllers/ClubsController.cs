@@ -1,57 +1,103 @@
 using Microsoft.AspNetCore.Mvc;
-using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
+using System.Net.Http.Json;
 
 namespace ClubCanvas.web.Controllers;
 
 public class ClubsController : Controller
-{   private readonly IClubsRepository _clubs;
+{
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public ClubsController(IClubsRepository clubs)
+    public ClubsController(IHttpClientFactory httpClientFactory)
     {
-        _clubs = clubs;
+        _httpClientFactory = httpClientFactory;
     }
 
     [Route("Clubs")]
-    public IActionResult Clubs()
+    public async Task<IActionResult> Clubs()
     {
-        var clubs = _clubs.GetAllClubs();
-        return View(clubs);
+        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+        
+        try
+        {
+            var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
+            return View(clubs ?? new List<Club>());
+        }
+        catch (HttpRequestException)
+        {
+            // API is not available - return empty list or error
+            return View(new List<Club>());
+        }
     }
 
-    public IActionResult ClubDetails(int id)
+    public async Task<IActionResult> ClubDetails(int id)
     {
-        var club = _clubs.GetClubById(id);
-        if (club == null)
+        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+        
+        try
+        {
+            var club = await httpClient.GetFromJsonAsync<Club>($"clubs/{id}");
+            if (club == null)
+            {
+                return NotFound();
+            }
+            return View(club);
+        }
+        catch (HttpRequestException)
         {
             return NotFound();
         }
-        return View(club);
     }
 
     [Route("Events")]
-    public IActionResult Events()
+    public async Task<IActionResult> Events()
     {
-        var clubs = _clubs.GetAllClubs();
-        return View(clubs);
+        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+        
+        try
+        {
+            var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
+            return View(clubs ?? new List<Club>());
+        }
+        catch (HttpRequestException)
+        {
+            return View(new List<Club>());
+        }
     }
 
     [Route("EventDetails")]
-    public IActionResult EventDetails(int id)
+    public async Task<IActionResult> EventDetails(int id)
     {
-        foreach (Club c in _clubs.GetAllClubs())
+        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+        
+        try
         {
-            foreach (Event e in c.Events)
+            // Get all clubs to find the event
+            var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
+            
+            if (clubs != null)
             {
-                if (e.Id == id)
+                foreach (Club c in clubs)
                 {
-                    return View(e);
+                    if (c.Events != null)
+                    {
+                        foreach (Event e in c.Events)
+                        {
+                            if (e.Id == id)
+                            {
+                                return View(e);
+                            }
+                        }
+                    }
                 }
             }
+            return NotFound();
         }
-        return NotFound();
+        catch (HttpRequestException)
+        {
+            return NotFound();
+        }
     }
-
 
     [Route("Canvas")]
     public IActionResult Canvas()

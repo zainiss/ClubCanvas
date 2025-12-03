@@ -117,7 +117,7 @@ internal static class ClubsSeed
                         Attendees = new List<User>()
                     }
                 }, 
-                Members = new List<string> { "sarah", "daniel" }, 
+                Members = new List<User> { sarah, daniel }, 
                 Owner = daniel, 
                 Description = "We take photos.", 
                 Image = "photography.png" 
@@ -138,7 +138,7 @@ internal static class ClubsSeed
                         Attendees = new List<User>()
                     }
                 }, 
-                Members = new List<string> { "sarah" }, 
+                Members = new List<User> { sarah }, 
                 Owner = sarah, 
                 Description = "Games and tournaments.", 
                 Image = "gaming.png" 

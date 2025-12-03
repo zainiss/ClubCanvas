@@ -18,6 +18,15 @@
                 <p><strong>Owner:</strong> Not specified</p>
             }
             <p><strong>Members:</strong> @(Model.Members?.Count ?? 0)</p>
+            @if (Model.Members != null && Model.Members.Count > 0)
+            {
+                <ul class="list-unstyled">
+                @foreach (var member in Model.Members)
+                {
+                    <li>@member.Username (@member.Email)</li>
+                }
+                </ul>
+            }
         </div>
 
         <div>

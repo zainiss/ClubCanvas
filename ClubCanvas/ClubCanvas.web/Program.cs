@@ -5,7 +5,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IClubsRepository, ClubsRepository>();
+
+// Configure HttpClient to call the API
+builder.Services.AddHttpClient("ClubCanvasAPI", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5076/api/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
+// Temporary: Keep UserRepository for HomeController until we add Identity
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
 
