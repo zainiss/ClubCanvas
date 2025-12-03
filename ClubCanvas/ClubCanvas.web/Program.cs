@@ -1,12 +1,12 @@
 using ClubCanvas.Core;
-using ClubCanvas.Infrastructure;
+using ClubCanvas.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IClubsRepository, ClubCanvas.Infrastructure.ClubsRepository>();
-builder.Services.AddSingleton<IUserRepository, ClubCanvas.Infrastructure.UserRepository>();
+builder.Services.AddSingleton<IClubsRepository, ClubsRepository>();
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
 
 var app = builder.Build();

@@ -4,7 +4,7 @@ using System.Linq;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 
-namespace ClubCanvas.Infrastructure;
+namespace ClubCanvas.Infrastructure.Repositories;
 
 public class ClubsRepository : IClubsRepository
 {
@@ -146,3 +146,4 @@ internal static class ClubsSeed
         };
     }
 }
+

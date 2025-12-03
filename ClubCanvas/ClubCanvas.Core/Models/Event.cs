@@ -36,3 +36,4 @@ namespace ClubCanvas.Core.Models
         }
     }
 }
+
