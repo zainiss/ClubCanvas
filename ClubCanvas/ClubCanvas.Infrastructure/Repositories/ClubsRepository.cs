@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using ClubCanvas.Infrastructure.Data;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 
@@ -8,142 +10,42 @@ namespace ClubCanvas.Infrastructure.Repositories;
 
 public class ClubsRepository : IClubsRepository
 {
-    private readonly List<Club> _clubs;
+    private readonly AppDbContext _context;
 
-    public ClubsRepository()
+    public ClubsRepository(AppDbContext context)
     {
-        _clubs = ClubsSeed.Create();
+        _context = context;
     }
 
     public List<Club> GetAllClubs()
     {
-        return _clubs;
+        return _context.Clubs.ToList();
     }
 
     public Club GetClubById(int id)
     {
-        return _clubs.FirstOrDefault(c => c.Id == id);
-    }
-
-    public void DeleteClub(int id)
-    {
-        var existing = _clubs.FirstOrDefault(c => c.Id == id);
-        if (existing != null)
-        {
-            _clubs.Remove(existing);
-        }
+        return _context.Clubs.Find(id);
     }
 
     public void AddClub(Club club)
     {
-        if (club == null)
-        {
-            return;
-        }
-
-        if (club.Id == 0)
-        {
-            var nextId = _clubs.Count == 0 ? 1 : _clubs.Max(c => c.Id) + 1;
-            club.Id = nextId;
-        }
-
-        _clubs.Add(club);
+        _context.Clubs.Add(club);
+        _context.SaveChanges();
     }
 
     public void UpdateClub(Club club)
     {
-        if (club == null)
-        {
-            return;
-        }
-
-        var existing = _clubs.FirstOrDefault(c => c.Id == club.Id);
-        if (existing == null)
-        {
-            return;
-        }
-
-        existing.Name = club.Name;
-        existing.Events = club.Events;
-        existing.Members = club.Members;
-        existing.Owner = club.Owner;
-        existing.Description = club.Description;
-        existing.Image = club.Image;
+        _context.Clubs.Update(club);
+        _context.SaveChanges();
     }
-}
 
-internal static class ClubsSeed
-{
-    public static List<Club> Create()
+    public void DeleteClub(int id)
     {
-        var daniel = new User 
-        { 
-            Email = "daniel@example.com", 
-            Username = "daniel", 
-            Password = "password123" 
-        };
-        
-        var sarah = new User 
-        { 
-            Email = "sarah@example.com", 
-            Username = "sarah", 
-            Password = "password123" 
-        };
-
-        return new List<Club>
+        var clubToDelete = _context.Clubs.Find(id);
+        if (clubToDelete != null)
         {
-            new Club 
-            { 
-                Id = 1, 
-                Name = "Photography Club", 
-                Events = new List<Event> 
-                { 
-                    new Event 
-                    { 
-                        Id = 1, 
-                        Name = "Photo Walk", 
-                        Description = "Join us for a photography walk in the park", 
-                        EventDate = DateTime.Now.AddDays(7), 
-                        Location = "Central Park",
-                        Attendees = new List<User>()
-                    },
-                    new Event 
-                    { 
-                        Id = 2, 
-                        Name = "Portrait Workshop", 
-                        Description = "Learn portrait photography techniques", 
-                        EventDate = DateTime.Now.AddDays(14), 
-                        Location = "Studio A",
-                        Attendees = new List<User>()
-                    }
-                }, 
-                Members = new List<User> { sarah, daniel }, 
-                Owner = daniel, 
-                Description = "We take photos.", 
-                Image = "photography.png" 
-            },
-            new Club 
-            { 
-                Id = 2, 
-                Name = "Gaming Club", 
-                Events = new List<Event> 
-                { 
-                    new Event 
-                    { 
-                        Id = 3, 
-                        Name = "Smash Night", 
-                        Description = "Super Smash Bros tournament", 
-                        EventDate = DateTime.Now.AddDays(3), 
-                        Location = "Game Room",
-                        Attendees = new List<User>()
-                    }
-                }, 
-                Members = new List<User> { sarah }, 
-                Owner = sarah, 
-                Description = "Games and tournaments.", 
-                Image = "gaming.png" 
-            }
-        };
+            _context.Clubs.Remove(clubToDelete);
+            _context.SaveChanges();
+        }
     }
 }
-

@@ -2,53 +2,43 @@ using System.Collections.Generic;
 using System.Linq;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
+using ClubCanvas.Infrastructure.Data;
 
 namespace ClubCanvas.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<User> _users;
+        private readonly AppDbContext _context;
 
-        public UserRepository()
+        public UserRepository(AppDbContext context)
         {
-            _users = new List<User>
-            {
-                new User { Email = "h@g.com", Username = "H" , Password = "g" },
-                new User { Email = "admin@example.com", Username = "a", Password = "123" }
-            };
+            _context = context;
         }
 
         public List<User> GetAllUsers()
         {
-            return _users;
+            return _context.Users.ToList();
         }
+
         public User GetUserByEmail(string email)
         {
-            return _users.FirstOrDefault(u => u.Email == email);
+            return _context.Users.FirstOrDefault(u => u.Email == email);
         }
+        
         public void AddUser(User user)
         {
-            _users.Add(user);
+            _context.Users.Add(user);
+            _context.SaveChanges();
         }
-        public void UpdateUser(User updatedUser)
+        public void UpdateUser(User user)
         {
-            if (updatedUser != null)
-            {
-                User userToUpdate = _users.FirstOrDefault(u => u.Email == updatedUser.Email);
-
-                if (userToUpdate != null)
-                {
-                    userToUpdate = updatedUser;
-                }
-            }
+            _context.Users.Update(user);
+            _context.SaveChanges();
         }
         public void DeleteUser(User user)
         {
-            var userToRemove = _users.FirstOrDefault(u => u.Email == user.Email);
-            if (userToRemove != null)
-            {
-                _users.Remove(userToRemove);
-            }
+            _context.Users.Remove(user);
+            _context.SaveChanges();
         }
     }
 }

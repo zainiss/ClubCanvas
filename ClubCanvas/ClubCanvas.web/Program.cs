@@ -17,11 +17,9 @@ builder.Services.AddHttpClient("ClubCanvasAPI", client =>
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Temporary: Keep UserRepository for HomeController until we add Identity
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClubsRepository, ClubsRepository>();
-//builder.Services.AddScoped<IEventsRepository, EventsRepository>();
-
+builder.Services.AddScoped<IEventsRepository, EventsRepository>();
 
 var app = builder.Build();
 
