@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using ClubCanvas.Core.Models;
 using ClubCanvas.Core;
+using ClubCanvas.Core.Models;
 
 namespace ClubCanvas.web.Controllers;
 

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using ClubCanvas.Core;
-using System.Reflection.Metadata.Ecma335;
 using ClubCanvas.Core.Models;
 
 namespace ClubCanvas.web.Controllers;
