@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
+using ClubCanvas.Infrastructure.Data;
 
 namespace ClubCanvas.Infrastructure.Repositories
 {
@@ -9,7 +10,7 @@ namespace ClubCanvas.Infrastructure.Repositories
     {
         private readonly List<ApplicationUser> _users;
 
-        public UserRepository()
+        public UserRepository(AppDbContext context)
         {
             _users = new List<ApplicationUser>
             {
@@ -20,11 +21,11 @@ namespace ClubCanvas.Infrastructure.Repositories
 
         public List<ApplicationUser> GetAllUsers()
         {
-            return _users;
+            return _context.Users.ToList();
         }
         public ApplicationUser GetUserByEmail(string email)
         {
-            return _users.FirstOrDefault(u => u.Email == email);
+            return _context.Users.FirstOrDefault(u => u.Email == email);
         }
         public void AddUser(ApplicationUser user)
         {
@@ -44,11 +45,8 @@ namespace ClubCanvas.Infrastructure.Repositories
         }
         public void DeleteUser(ApplicationUser user)
         {
-            var userToRemove = _users.FirstOrDefault(u => u.Email == user.Email);
-            if (userToRemove != null)
-            {
-                _users.Remove(userToRemove);
-            }
+            _context.Users.Remove(user);
+            _context.SaveChanges();
         }
     }
 }

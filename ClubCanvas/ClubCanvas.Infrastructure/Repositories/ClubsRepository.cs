@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using ClubCanvas.Infrastructure.Data;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 
@@ -8,73 +10,36 @@ namespace ClubCanvas.Infrastructure.Repositories;
 
 public class ClubsRepository : IClubsRepository
 {
-    private readonly List<Club> _clubs;
+    private readonly AppDbContext _context;
 
-    public ClubsRepository()
+    public ClubsRepository(AppDbContext context)
     {
-        _clubs = ClubsSeed.Create();
+        _context = context;
     }
 
     public List<Club> GetAllClubs()
     {
-        return _clubs;
+        return _context.Clubs.ToList();
     }
 
     public Club GetClubById(int id)
     {
-        return _clubs.FirstOrDefault(c => c.Id == id);
-    }
-
-    public void DeleteClub(int id)
-    {
-        var existing = _clubs.FirstOrDefault(c => c.Id == id);
-        if (existing != null)
-        {
-            _clubs.Remove(existing);
-        }
+        return _context.Clubs.Find(id);
     }
 
     public void AddClub(Club club)
     {
-        if (club == null)
-        {
-            return;
-        }
-
-        if (club.Id == 0)
-        {
-            var nextId = _clubs.Count == 0 ? 1 : _clubs.Max(c => c.Id) + 1;
-            club.Id = nextId;
-        }
-
-        _clubs.Add(club);
+        _context.Clubs.Add(club);
+        _context.SaveChanges();
     }
 
     public void UpdateClub(Club club)
     {
-        if (club == null)
-        {
-            return;
-        }
-
-        var existing = _clubs.FirstOrDefault(c => c.Id == club.Id);
-        if (existing == null)
-        {
-            return;
-        }
-
-        existing.Name = club.Name;
-        existing.Events = club.Events;
-        existing.Members = club.Members;
-        existing.Owner = club.Owner;
-        existing.Description = club.Description;
-        existing.Image = club.Image;
+        _context.Clubs.Update(club);
+        _context.SaveChanges();
     }
-}
 
-internal static class ClubsSeed
-{
-    public static List<Club> Create()
+    public void DeleteClub(int id)
     {
         var daniel = new ApplicationUser 
         { 
