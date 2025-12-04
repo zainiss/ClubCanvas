@@ -11,6 +11,7 @@ public class Club
     public string Description { get; set; }
     public List<Event> Events { get; set; }
     public List<ApplicationUser> Members { get; set; }
+    public string OwnerId { get; set; }
     public ApplicationUser Owner { get; set; }
     public string Image { get; set; }
 

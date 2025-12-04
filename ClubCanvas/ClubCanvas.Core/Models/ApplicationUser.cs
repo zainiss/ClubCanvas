@@ -16,5 +16,6 @@ public class ApplicationUser : IdentityUser
     public string? LastName { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }
+    public ICollection<Club>? OwnedClubs { get; set; }
 }
 

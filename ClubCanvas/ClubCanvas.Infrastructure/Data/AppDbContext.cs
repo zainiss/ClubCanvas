@@ -17,13 +17,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
-        // modelBuilder.Entity<ApplicationUser>(entity =>
-        // {
-        //     entity.HasKey(e => e.Id);
-        //     entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
-        //     entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
-        //     entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
-        // });
         modelBuilder.Entity<Club>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -31,7 +24,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
             entity.HasMany(e => e.Events).WithOne(e => e.Club).HasForeignKey(e => e.ClubId);
             entity.HasMany(e => e.Members);
-            entity.Property(e => e.Owner).IsRequired();
+            entity.HasOne(e => e.Owner).WithMany(e => e.OwnedClubs).HasForeignKey(entity => entity.OwnerId);
             entity.Property(e => e.Image).IsRequired();
         });
 
