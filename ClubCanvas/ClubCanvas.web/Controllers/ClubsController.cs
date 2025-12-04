@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using ClubCanvas.Core.Models;
 using System.Net.Http.Json;
+using ClubCanvas.Core;
+using ClubCanvas.web.Models;
 
 namespace ClubCanvas.web.Controllers;
 
 public class ClubsController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IClubsRepository _clubs;
 
     public ClubsController(IHttpClientFactory httpClientFactory)
     {
@@ -113,39 +116,30 @@ public class ClubsController : Controller
         return View();
     }
 
-    // [Route("NewClub")]
-    // public async Task<IActionResult> NewClub()
-    // {
-    //     var allUsers = await _users.GetAllUsersAsync();
-    //     foreach(ApplicationUser u in allUsers)
-    //     {
-    //         Console.WriteLine(u.Email);
-    //     }
-    //     return View();
-    // }
+    [Route("NewClub")]
+    public async Task<IActionResult> NewClub()
+    {
+        return View();
+    }
 
 
-    // [HttpPost]
-    // [Route("NewClub")]
-    // public async Task<IActionResult> NewClub(ClubViewModel model)
-    // {
-    //     if (ModelState.IsValid)
-    //     {
-    //         // Find user by email
-    //         var user = await _userManager.FindByEmailAsync(model.Email);
-    //         if (user != null)
-    //         {
-    //             // Verify password and sign in
-    //             var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: false, lockoutOnFailure: false);
-    //             if (result.Succeeded)
-    //             {
-    //                 return RedirectToAction("Index");
-    //             }
-    //         }
-            
-    //         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-    //     }
+    [HttpPost]
+    [Route("NewClub")]
+    public async Task<IActionResult> NewClub(ClubViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            var newClub = new Club
+            {
+                Name = model.Name,
+                Description = model.Description,
+                OwnerId = model.OwnerId,
+                Image = model.Image
+            };
 
-    //     return View(model);
-    // }
+            await _clubs.AddClubAsync(newClub);
+        }
+
+        return View(model);
+    }
 }
