@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using ClubCanvas.Core;
+using ClubCanvas.Core.Models;
 using ClubCanvas.Infrastructure.Repositories;
 using ClubCanvas.Infrastructure.Data;
 
@@ -17,6 +19,23 @@ builder.Services.AddHttpClient("ClubCanvasAPI", client =>
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Configure Identity
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+{
+    // Password settings
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false; // Changed to false - special characters not required
+    options.Password.RequiredLength = 8;
+    
+    // User settings
+    options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedEmail = false;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IClubsRepository, ClubsRepository>();
 builder.Services.AddScoped<IEventsRepository, EventsRepository>();
@@ -30,6 +49,7 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

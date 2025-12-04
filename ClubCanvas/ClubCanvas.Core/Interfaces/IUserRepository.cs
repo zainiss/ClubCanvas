@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ClubCanvas.Core.Models;
 
 namespace ClubCanvas.Core
 {
     public interface IUserRepository
     {
-        List<ApplicationUser> GetAllUsers();
-        ApplicationUser GetUserByEmail(string email);
-        void AddUser(ApplicationUser user);
-        void UpdateUser(ApplicationUser user);
-        void DeleteUser(ApplicationUser user);
+        Task<List<ApplicationUser>> GetAllUsersAsync();
+        Task<ApplicationUser?> GetUserByEmailAsync(string email);
+        Task AddUserAsync(ApplicationUser user);
+        Task UpdateUserAsync(ApplicationUser user);
+        Task DeleteUserAsync(ApplicationUser user);
     }
 }

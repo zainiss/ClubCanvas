@@ -23,9 +23,17 @@ public class ClubsController : Controller
             var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
             return View(clubs ?? new List<Club>());
         }
-        catch (HttpRequestException)
+        catch (HttpRequestException ex)
         {
-            // API is not available - return empty list or error
+            // Log the error for debugging
+            Console.WriteLine($"Error calling API: {ex.Message}");
+            // API is not available - return empty list
+            return View(new List<Club>());
+        }
+        catch (Exception ex)
+        {
+            // Log any other errors
+            Console.WriteLine($"Unexpected error: {ex.Message}");
             return View(new List<Club>());
         }
     }

@@ -18,17 +18,17 @@ public class ClubsController : ControllerBase
 
     // GET: api/clubs
     [HttpGet]
-    public ActionResult<List<Club>> GetAllClubs()
+    public async Task<ActionResult<List<Club>>> GetAllClubs()
     {
-        var clubs = _clubsRepository.GetAllClubs();
+        var clubs = await _clubsRepository.GetAllClubsAsync();
         return Ok(clubs);
     }
 
     // GET: api/clubs/5
     [HttpGet("{id}")]
-    public ActionResult<Club> GetClubById(int id)
+    public async Task<ActionResult<Club>> GetClubById(int id)
     {
-        var club = _clubsRepository.GetClubById(id);
+        var club = await _clubsRepository.GetClubByIdAsync(id);
         
         if (club == null)
         {
@@ -41,14 +41,14 @@ public class ClubsController : ControllerBase
     // POST: api/clubs
     // Creates a new club
     [HttpPost]
-    public ActionResult<Club> CreateClub([FromBody] Club club)
+    public async Task<ActionResult<Club>> CreateClub([FromBody] Club club)
     {
         if (club == null)
         {
             return BadRequest("Club data is required");
         }
 
-        _clubsRepository.AddClub(club);
+        await _clubsRepository.AddClubAsync(club);
         
         // Return 201 Created with the new club
         return CreatedAtAction(nameof(GetClubById), new { id = club.Id }, club);
@@ -57,7 +57,7 @@ public class ClubsController : ControllerBase
     // PUT: api/clubs/5
     // Updates an existing club
     [HttpPut("{id}")]
-    public ActionResult UpdateClub(int id, [FromBody] Club club)
+    public async Task<ActionResult> UpdateClub(int id, [FromBody] Club club)
     {
         if (club == null)
         {
@@ -69,13 +69,13 @@ public class ClubsController : ControllerBase
             return BadRequest("Club ID mismatch");
         }
 
-        var existingClub = _clubsRepository.GetClubById(id);
+        var existingClub = await _clubsRepository.GetClubByIdAsync(id);
         if (existingClub == null)
         {
             return NotFound($"Club with ID {id} not found");
         }
 
-        _clubsRepository.UpdateClub(club);
+        await _clubsRepository.UpdateClubAsync(club);
         
         return NoContent(); // 204 No Content - standard for successful PUT
     }
@@ -83,15 +83,15 @@ public class ClubsController : ControllerBase
     // DELETE: api/clubs/5
     // Deletes a club
     [HttpDelete("{id}")]
-    public ActionResult DeleteClub(int id)
+    public async Task<ActionResult> DeleteClub(int id)
     {
-        var club = _clubsRepository.GetClubById(id);
+        var club = await _clubsRepository.GetClubByIdAsync(id);
         if (club == null)
         {
             return NotFound($"Club with ID {id} not found");
         }
 
-        _clubsRepository.DeleteClub(id);
+        await _clubsRepository.DeleteClubAsync(id);
         
         return NoContent(); // 204 No Content - standard for successful DELETE
     }

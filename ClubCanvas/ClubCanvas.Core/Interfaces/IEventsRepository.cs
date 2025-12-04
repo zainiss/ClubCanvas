@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ClubCanvas.Core.Models;
 
 namespace ClubCanvas.Core
 {
     public interface IEventsRepository
     {
-        List<Event> GetAllEvents();
-        Event GetEventById(int id);
-        void AddEvent(Event e);
-        void UpdateEvent(Event e);
-        void DeleteEvent(int id);
+        Task<List<Event>> GetAllEventsAsync();
+        Task<Event?> GetEventByIdAsync(int id);
+        Task AddEventAsync(Event e);
+        Task UpdateEventAsync(Event e);
+        Task DeleteEventAsync(int id);
     }
 }

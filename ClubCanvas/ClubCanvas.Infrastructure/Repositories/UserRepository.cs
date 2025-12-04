@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 using ClubCanvas.Infrastructure.Data;
@@ -8,45 +10,42 @@ namespace ClubCanvas.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly List<ApplicationUser> _users;
+        private readonly AppDbContext _context;
 
         public UserRepository(AppDbContext context)
         {
-            _users = new List<ApplicationUser>
-            {
-                new ApplicationUser { Email = "h@g.com", UserName = "H" },
-                new ApplicationUser { Email = "admin@example.com", UserName = "a" }
-            };
+            _context = context;
         }
 
-        public List<ApplicationUser> GetAllUsers()
+        public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
-            return _context.Users.ToList();
+            return await _context.Users.ToListAsync();
         }
-        public ApplicationUser GetUserByEmail(string email)
+
+        public async Task<ApplicationUser?> GetUserByEmailAsync(string email)
         {
-            return _context.Users.FirstOrDefault(u => u.Email == email);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
-        public void AddUser(ApplicationUser user)
+
+        public async Task AddUserAsync(ApplicationUser user)
         {
-            _users.Add(user);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
         }
-        public void UpdateUser(ApplicationUser updatedUser)
+
+        public async Task UpdateUserAsync(ApplicationUser updatedUser)
         {
             if (updatedUser != null)
             {
-                ApplicationUser userToUpdate = _users.FirstOrDefault(u => u.Email == updatedUser.Email);
-
-                if (userToUpdate != null)
-                {
-                    userToUpdate = updatedUser;
-                }
+                _context.Users.Update(updatedUser);
+                await _context.SaveChangesAsync();
             }
         }
-        public void DeleteUser(ApplicationUser user)
+
+        public async Task DeleteUserAsync(ApplicationUser user)
         {
             _context.Users.Remove(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

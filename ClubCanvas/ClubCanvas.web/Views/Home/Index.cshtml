@@ -1,11 +1,18 @@
 <div class="text-center">
     <h1 class="display-4">Welcome To Club Canvas</h1>
-    <h2 class="display4">Sign up/Log in</h2>
-      <div class="button-container" style="
-      display:flex;
-      gap: 1vh;
-      justify-content: center;">
-        <a asp-action="Signup" class="btn btn-primary">Sign up</a>
-        <a asp-action="Login" class="btn btn-secondary">Log In</a>
-    </div>
+    @if (ViewBag.UserName != null)
+    {
+        <h2 class="display-4">Hi @ViewBag.UserName!</h2>
+    }
+    else
+    {
+        <h2 class="display4">Sign up/Log in</h2>
+        <div class="button-container" style="
+        display:flex;
+        gap: 1vh;
+        justify-content: center;">
+            <a asp-action="Signup" class="btn btn-primary">Sign up</a>
+            <a asp-action="Login" class="btn btn-secondary">Log In</a>
+        </div>
+    }
 </div>

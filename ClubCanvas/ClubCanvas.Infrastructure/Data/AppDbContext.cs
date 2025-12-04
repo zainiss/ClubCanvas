@@ -1,17 +1,32 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ClubCanvas.Core.Models;
-using ClubCanvas.Infrastructure.Repositories;
 
 namespace ClubCanvas.Infrastructure.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
-    public DbSet<User> Users { get; set; }
     public DbSet<Club> Clubs { get; set; }
     public DbSet<Event> Events { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
     {
-        optionsBuilder.UseSqlite("Data Source=app.db");
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        
+        // Configure Identity table names (optional, for consistency)
+        builder.Entity<ApplicationUser>(entity =>
+        {
+            entity.ToTable("Users");
+        });
+        
+        builder.Entity<ApplicationRole>(entity =>
+        {
+            entity.ToTable("Roles");
+        });
     }
 }

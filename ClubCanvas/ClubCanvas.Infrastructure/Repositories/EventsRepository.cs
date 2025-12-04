@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 using ClubCanvas.Infrastructure.Data;
+
 namespace ClubCanvas.Infrastructure.Repositories;
 
 public class EventsRepository : IEventsRepository
@@ -13,35 +15,39 @@ public class EventsRepository : IEventsRepository
         _context = context;
     }
 
-    public List<Event> GetAllEvents()
+    public async Task<List<Event>> GetAllEventsAsync()
     {
-        return _context.Events.ToList();
+        return await _context.Events
+            .Include(e => e.Attendees)
+            .ToListAsync();
     }
 
-    public Event GetEventById(int id)
+    public async Task<Event?> GetEventByIdAsync(int id)
     {
-        return _context.Events.Find(id);
+        return await _context.Events
+            .Include(e => e.Attendees)
+            .FirstOrDefaultAsync(e => e.Id == id);
     }
     
-    public void AddEvent(Event e)
+    public async Task AddEventAsync(Event e)
     {
         _context.Events.Add(e);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void UpdateEvent(Event e)
+    public async Task UpdateEventAsync(Event e)
     {
         _context.Events.Update(e);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
 
-    public void DeleteEvent(int id)
+    public async Task DeleteEventAsync(int id)
     {
-        var eventToDelete = _context.Events.Find(id);
+        var eventToDelete = await _context.Events.FindAsync(id);
         if (eventToDelete != null)
         {
             _context.Events.Remove(eventToDelete);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
