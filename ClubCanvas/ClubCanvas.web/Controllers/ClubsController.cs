@@ -112,4 +112,40 @@ public class ClubsController : Controller
     {
         return View();
     }
+
+    // [Route("NewClub")]
+    // public async Task<IActionResult> NewClub()
+    // {
+    //     var allUsers = await _users.GetAllUsersAsync();
+    //     foreach(ApplicationUser u in allUsers)
+    //     {
+    //         Console.WriteLine(u.Email);
+    //     }
+    //     return View();
+    // }
+
+
+    // [HttpPost]
+    // [Route("NewClub")]
+    // public async Task<IActionResult> NewClub(ClubViewModel model)
+    // {
+    //     if (ModelState.IsValid)
+    //     {
+    //         // Find user by email
+    //         var user = await _userManager.FindByEmailAsync(model.Email);
+    //         if (user != null)
+    //         {
+    //             // Verify password and sign in
+    //             var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: false, lockoutOnFailure: false);
+    //             if (result.Succeeded)
+    //             {
+    //                 return RedirectToAction("Index");
+    //             }
+    //         }
+            
+    //         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+    //     }
+
+    //     return View(model);
+    // }
 }
