@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ClubCanvas.Core.Models
 {
@@ -12,6 +13,8 @@ namespace ClubCanvas.Core.Models
         public string? Description { get; set; }
         public DateTime EventDate { get; set; }
         public string? Location { get; set; }
+        public int ClubId { get; set; }
+        public Club Club {get; set;}
         public List<ApplicationUser> Attendees { get; set; }
 
         public void AddAttendee(ApplicationUser user)

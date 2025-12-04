@@ -14,19 +14,37 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
-        
-        // Configure Identity table names (optional, for consistency)
-        builder.Entity<ApplicationUser>(entity =>
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        base.OnModelCreating(modelBuilder);
+
+        // modelBuilder.Entity<ApplicationUser>(entity =>
+        // {
+        //     entity.HasKey(e => e.Id);
+        //     entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+        //     entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
+        //     entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
+        // });
+        modelBuilder.Entity<Club>(entity =>
         {
-            entity.ToTable("Users");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
+            entity.HasMany(e => e.Events).WithOne(e => e.Club).HasForeignKey(e => e.ClubId);
+            entity.HasMany(e => e.Members);
+            entity.Property(e => e.Owner).IsRequired();
+            entity.Property(e => e.Image).IsRequired();
         });
-        
-        builder.Entity<ApplicationRole>(entity =>
+
+        modelBuilder.Entity<Event>(entity =>
         {
-            entity.ToTable("Roles");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.EventDate).IsRequired();
+            entity.Property(e => e.Location).IsRequired().HasMaxLength(100);
+            entity.HasMany(e => e.Attendees);
+            entity.Property(e => e.ClubId).IsRequired();
+            entity.HasOne(e => e.Club).WithMany(e => e.Events).HasForeignKey(e => e.ClubId);
         });
     }
 }
