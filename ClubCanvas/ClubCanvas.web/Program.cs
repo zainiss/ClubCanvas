@@ -23,11 +23,11 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     // Password settings
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false; // Changed to false - special characters not required
-    options.Password.RequiredLength = 8;
+    options.Password.RequiredLength = 3;
     
     // User settings
     options.User.RequireUniqueEmail = true;

@@ -1,4 +1,8 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ClubCanvas.API.Models;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 
@@ -9,11 +13,13 @@ namespace ClubCanvas.API.Controllers;
 public class ClubsController : ControllerBase
 {
     private readonly IClubsRepository _clubsRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
 
     // Constructor injection - ASP.NET Core gives us the repository automatically
-    public ClubsController(IClubsRepository clubsRepository)
+    public ClubsController(IClubsRepository clubsRepository, UserManager<ApplicationUser> userManager)
     {
         _clubsRepository = clubsRepository;
+        _userManager = userManager;
     }
 
     // GET: api/clubs
@@ -41,12 +47,44 @@ public class ClubsController : ControllerBase
     // POST: api/clubs
     // Creates a new club
     [HttpPost]
-    public async Task<ActionResult<Club>> CreateClub([FromBody] Club club)
+    [Authorize] // Requires JWT token
+    public async Task<ActionResult<Club>> CreateClub([FromBody] CreateClubDto dto)
     {
-        if (club == null)
+        if (!ModelState.IsValid)
         {
-            return BadRequest("Club data is required");
+            return BadRequest(ModelState);
         }
+
+        // Get the current user from JWT token
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized("User not authenticated");
+        }
+
+        var currentUser = await _userManager.FindByIdAsync(userId);
+        if (currentUser == null)
+        {
+            return Unauthorized("User not found");
+        }
+
+        // Map DTO to Club entity
+        var club = new Club
+        {
+            Name = dto.Name,
+            Description = dto.Description,
+            Image = dto.Image ?? string.Empty,
+            Owner = currentUser,
+            Members = new List<ApplicationUser>(),
+            Events = dto.Events?.Select(e => new Event
+            {
+                Name = e.Name,
+                Description = e.Description,
+                EventDate = e.EventDate,
+                Location = e.Location,
+                Attendees = new List<ApplicationUser>()
+            }).ToList() ?? new List<Event>()
+        };
 
         await _clubsRepository.AddClubAsync(club);
         
@@ -57,6 +95,7 @@ public class ClubsController : ControllerBase
     // PUT: api/clubs/5
     // Updates an existing club
     [HttpPut("{id}")]
+    [Authorize] // Requires JWT token
     public async Task<ActionResult> UpdateClub(int id, [FromBody] Club club)
     {
         if (club == null)
@@ -83,6 +122,7 @@ public class ClubsController : ControllerBase
     // DELETE: api/clubs/5
     // Deletes a club
     [HttpDelete("{id}")]
+    [Authorize] // Requires JWT token
     public async Task<ActionResult> DeleteClub(int id)
     {
         var club = await _clubsRepository.GetClubByIdAsync(id);
