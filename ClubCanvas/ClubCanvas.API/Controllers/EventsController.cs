@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
@@ -54,6 +55,7 @@ public class EventsController : ControllerBase
 
     // POST: api/events
     [HttpPost]
+    [Authorize] // Requires JWT token
     public async Task<ActionResult<Event>> CreateEvent([FromBody] Event eventItem)
     {
         if (eventItem == null)
@@ -67,6 +69,7 @@ public class EventsController : ControllerBase
 
     // PUT: api/events/5
     [HttpPut("{id}")]
+    [Authorize] // Requires JWT token
     public async Task<ActionResult> UpdateEvent(int id, [FromBody] Event eventItem)
     {
         if (eventItem == null)
@@ -91,6 +94,7 @@ public class EventsController : ControllerBase
 
     // DELETE: api/events/5
     [HttpDelete("{id}")]
+    [Authorize] // Requires JWT token
     public async Task<ActionResult> DeleteEvent(int id)
     {
         var eventItem = await _eventsRepository.GetEventByIdAsync(id);
