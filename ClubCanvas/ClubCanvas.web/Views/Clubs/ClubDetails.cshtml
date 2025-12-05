@@ -43,7 +43,7 @@
                         {
                             <p class="mb-1 mt-2">@e.Description</p>
                         }
-                        <p class="mb-1"><strong>Date:</strong> @e.EventDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
+                        <p class="mb-1"><strong>Date:</strong> @(e.EventDate?.ToString("MMMM dd, yyyy 'at' h:mm tt") ?? "TBD")</p>
                         @if (!string.IsNullOrEmpty(e.Location))
                         {
                             <p class="mb-0"><strong>Location:</strong> @e.Location</p>
