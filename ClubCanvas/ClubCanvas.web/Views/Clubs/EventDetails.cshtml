@@ -1,31 +1,16 @@
-@model ClubCanvas.Core.Models.Event
+@model ClubCanvas.Shared.DTOs.CreateEventDto
 
 <div class="container-fluid d-flex justify-content-center">
     <div class="text-center mb-5" style="max-width: 800px; width: 100%;">
         <h2 class="mb-0"><strong>@Model.Name &#64;@Model.Location</strong></h2>
-        <h4 class="mb-4">@Model.EventDate</h4>
+        <h4 class="mb-4">@Model.EventDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</h4>
         
         <p class="mb-4">@Model.Description</p>
         
         <div>
             <h2>Attendees:</h2>
             <div class="d-flex justify-content-center">
-                @if (Model.Attendees != null && Model.Attendees.Any())
-                {
-                    <ul class="list-unstyled" style="max-width: 600px; width: 100%;">
-                        @foreach (var attendee in Model.Attendees)
-                        {
-                            <li class="mb-3 p-3 border rounded text-start">
-                                <strong>@attendee.UserName</strong>
-                                <p>@attendee.Email</p>
-                            </li>
-                        }
-                    </ul>
-                }
-                else
-                {
-                    <p>No attendees yet</p>
-                }
+                <p>No attendees yet</p>
             </div>
         </div>
         <button>Register Now</button>
