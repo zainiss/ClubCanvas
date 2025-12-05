@@ -1,4 +1,4 @@
-@model List<ClubCanvas.Core.Models.Club>
+@model List<ClubCanvas.Shared.DTOs.CreateEventDto>
 
 <div class="text-center mb-5">
     <h2 class="mb-4"><strong>Events</strong></h2>
@@ -7,18 +7,15 @@
 <div class="d-flex justify-content-center">
     <div class="text-center" style="max-width: 800px; width: 100%;">
         <ul class="list-unstyled">
-            @foreach (var c in Model)
+            @foreach (var e in Model)
             {
-                @foreach (Event e in c.Events)
-                {
-                    <li class="mb-3 p-3 border rounded">
-                        <a asp-controller="Clubs" asp-action="EventDetails" asp-route-id="@e.Id" class="text-decoration-none">
-                            <strong>@e.Name</strong>
-                        </a>
-                        <p class="mb-0 mt-2">@e.Description</p>
-                        <p class="mb-0 mt-2">@e.EventDate</p>
-                    </li>
-                }
+                <li class="mb-3 p-3 border rounded">
+                    <a asp-controller="Clubs" asp-action="EventDetails" asp-route-id="@e.Id" class="text-decoration-none">
+                        <strong>@e.Name</strong>
+                    </a>
+                    <p class="mb-0 mt-2">@e.Description</p>
+                    <p class="mb-0 mt-2">@e.EventDate</p>
+                </li>
             }
         </ul>
     </div>

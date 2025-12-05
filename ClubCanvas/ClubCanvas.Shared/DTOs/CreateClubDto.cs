@@ -27,6 +27,8 @@ public class CreateClubDto
 
 public class CreateEventDto
 {
+    [Key]
+    public int Id { get; set; }
     [Required]
     public string Name { get; set; } = string.Empty;
     
@@ -36,6 +38,6 @@ public class CreateEventDto
     public DateTime EventDate { get; set; }
     
     public string? Location { get; set; }
-    public string? ClubId { get; set; }
+    public int? ClubId { get; set; }
 }
 

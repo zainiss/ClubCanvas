@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
+using ClubCanvas.Shared.DTOs;
 
 namespace ClubCanvas.API.Controllers;
 
@@ -21,7 +22,7 @@ public class EventsController : ControllerBase
     // GET: api/events?clubId=1
     // Gets all events, optionally filtered by club
     [HttpGet]
-    public async Task<ActionResult<List<Event>>> GetEvents([FromQuery] int? clubId = null)
+    public async Task<ActionResult<List<CreateEventDto>>> GetEvents([FromQuery] int? clubId = null)
     {
         if (clubId.HasValue)
         {
@@ -36,7 +37,14 @@ public class EventsController : ControllerBase
 
         // Get all events
         var allEvents = await _eventsRepository.GetAllEventsAsync();
-        return Ok(allEvents);
+        return Ok(allEvents.Select(c => new CreateEventDto {
+            Id = c.Id,
+            Name = c.Name,
+            Description = c.Description,
+            Location = c.Location,
+            EventDate = c.EventDate,
+            ClubId = c.ClubId
+        }).ToList());
     }
 
     // GET: api/events/5

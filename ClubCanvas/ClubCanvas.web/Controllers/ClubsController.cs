@@ -80,12 +80,12 @@ public class ClubsController : Controller
         
         try
         {
-            var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
-            return View(clubs ?? new List<Club>());
+            var clubs = await httpClient.GetFromJsonAsync<List<CreateEventDto>>("events");
+            return View(clubs ?? new List<CreateEventDto>());
         }
         catch (HttpRequestException)
         {
-            return View(new List<Club>());
+            return View(new List<CreateEventDto>());
         }
     }
 
