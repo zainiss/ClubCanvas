@@ -2,6 +2,15 @@
 
 <div class="container-fluid d-flex justify-content-center">
     <div class="text-center mb-5" style="max-width: 800px; width: 100%;">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+        
         <h2 class="mb-0"><strong>@Model.Name &#64;@Model.Location</strong></h2>
         <h4 class="mb-4">@Model.EventDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</h4>
         
@@ -10,9 +19,26 @@
         <div>
             <h2>Attendees:</h2>
             <div class="d-flex justify-content-center">
-                <p>No attendees yet</p>
+                @if (Model.Attendees != null && Model.Attendees.Any())
+                {
+                    <ul class="list-unstyled" style="max-width: 600px; width: 100%;">
+                        @foreach (var attendee in Model.Attendees)
+                        {
+                            <li class="mb-3 p-3 border rounded text-start">
+                                <strong>@attendee.Username</strong>
+                                <p>@attendee.Email</p>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p>No attendees yet</p>
+                }
             </div>
         </div>
-        <button>Register Now</button>
+        <form asp-controller="Clubs" asp-action="RegisterForEvent" asp-route-eventId="@ViewBag.EventId" method="post">
+            <button type="submit" class="btn btn-primary">Register Now</button>
+        </form>
     </div>
 </div>

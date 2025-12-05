@@ -121,11 +121,48 @@ public class ClubsController : Controller
                 return NotFound();
             }
             
+            ViewBag.EventId = id;
             return View(eventItem);
         }
         catch (HttpRequestException)
         {
             return NotFound();
+        }
+    }
+
+    [HttpPost]
+    [Route("EventDetails/Register/{eventId:int}")]
+    public async Task<IActionResult> RegisterForEvent(int eventId)
+    {
+        var token = HttpContext.Session.GetString("JwtToken");
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction("Login", "Home");
+        }
+
+        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        try
+        {
+            var response = await httpClient.PostAsync($"events/{eventId}/register", null);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Success"] = "Successfully registered for event!";
+                return RedirectToAction("EventDetails", new { id = eventId });
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                TempData["Error"] = $"Failed to register: {errorContent}";
+                return RedirectToAction("EventDetails", new { id = eventId });
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Error: {ex.Message}";
+            return RedirectToAction("EventDetails", new { id = eventId });
         }
     }
 
