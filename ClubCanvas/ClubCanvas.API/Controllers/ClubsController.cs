@@ -32,6 +32,34 @@ public class ClubsController : ControllerBase
         foreach (var club in clubs)
         {
             var owner = await _userManager.FindByIdAsync(club.OwnerId);
+            
+            // Map events to DTOs
+            var eventsDto = club.Events?.Select(e => {
+                var attendeesDto = e.Attendees?.Select(a => new UserDto
+                {
+                    Username = a.UserName ?? string.Empty,
+                    Email = a.Email ?? string.Empty
+                }).ToList() ?? new List<UserDto>();
+
+                return new CreateEventDto
+                {
+                    Id = e.Id,
+                    Name = e.Name ?? string.Empty,
+                    Description = e.Description,
+                    EventDate = e.EventDate ?? DateTime.MinValue,
+                    Location = e.Location,
+                    ClubId = e.ClubId,
+                    Attendees = attendeesDto
+                };
+            }).ToList() ?? new List<CreateEventDto>();
+            
+            // Map members to DTOs
+            var membersDto = club.Members?.Select(m => new UserDto
+            {
+                Username = m.UserName ?? string.Empty,
+                Email = m.Email ?? string.Empty
+            }).ToList() ?? new List<UserDto>();
+            
             clubsDto.Add(new CreateClubDto
             {
                 Id = club.Id,
@@ -40,7 +68,9 @@ public class ClubsController : ControllerBase
                 Image = club.Image,
                 OwnerId = club.OwnerId,
                 OwnerEmail = owner?.Email,
-                OwnerName = owner?.UserName
+                OwnerName = owner?.UserName,
+                Events = eventsDto,
+                Members = membersDto
             });
         }
         
