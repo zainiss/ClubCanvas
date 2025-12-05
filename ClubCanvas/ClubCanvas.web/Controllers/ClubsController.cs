@@ -197,18 +197,80 @@ public class ClubsController : Controller
 
                 return RedirectToAction("clubs");
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine($"DEBUG: HttpRequestException: {ex.Message}");
-                ModelState.AddModelError(string.Empty, 
-                    $"Cannot connect to API: {ex.Message}. Make sure the API is running.");
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
+            }
+        }
+        return View(model);
+    }
+
+    [HttpGet]
+    [Route("NewEvent")]
+    public async Task<IActionResult> NewEvent()
+    {
+        return View();
+    }
+
+
+    [HttpPost]
+    [Route("NewEvent")]
+    public async Task<IActionResult> NewEvent(EventViewModel model, int clubId)
+    {
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var token = HttpContext.Session.GetString("JwtToken");
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    ModelState.AddModelError("", "Could not authenticate session.");
+                    return View(model);
+                }
+
+                var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("me");
+
+                if (owner == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Please log in to create a club.");
+                    return View(model);
+                }
+
+                var club = await httpClient.GetFromJsonAsync<CreateClubDto>($"api/clubs/{clubId}");
+                if (club == null)
+                {
+                    ModelState.AddModelError(string.Empty, $"Could not find club with id");
+                    return View(model);
+                }
+
+                if (owner.UserId == club.OwnerId)
+                {
+                    // Create DTO
+                    var newEventDto = new CreateEventDto
+                    {
+                        Name = model.Name,
+                        Description = model.Description,
+                        Location = model.Location,
+                        EventDate = model.EventDate,
+                        ClubId = clubId
+                    };
+
+                    var response = await httpClient.PostAsJsonAsync("events", newEventDto);
+
+                    return RedirectToAction("clubs");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, $"Must be club owner to add an event");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"DEBUG: Exception: {ex.Message}");
-                Console.WriteLine($"DEBUG: StackTrace: {ex.StackTrace}");
-                ModelState.AddModelError(string.Empty, 
-                    $"Unexpected error: {ex.Message}");
+                ModelState.AddModelError(string.Empty, $"Error: {ex.Message}");
             }
         }
         return View(model);

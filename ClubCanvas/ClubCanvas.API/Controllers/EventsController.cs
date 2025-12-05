@@ -64,15 +64,24 @@ public class EventsController : ControllerBase
     // POST: api/events
     [HttpPost]
     [Authorize] // Requires JWT token
-    public async Task<ActionResult<Event>> CreateEvent([FromBody] Event eventItem)
+    public async Task<ActionResult<Event>> CreateEvent([FromBody] CreateEventDto eventItem)
     {
         if (eventItem == null)
         {
             return BadRequest("Event data is required");
         }
 
-        await _eventsRepository.AddEventAsync(eventItem);
-        return CreatedAtAction(nameof(GetEventById), new { id = eventItem.Id }, eventItem);
+        var e = new Event
+        {
+            Name = eventItem.Name,
+            Description = eventItem.Description,
+            Location = eventItem.Location,
+            EventDate = eventItem.EventDate,
+            ClubId = eventItem.ClubId
+        };
+
+        await _eventsRepository.AddEventAsync(e);
+        return CreatedAtAction(nameof(GetEventById), new { id = e.Id }, e);
     }
 
     // PUT: api/events/5

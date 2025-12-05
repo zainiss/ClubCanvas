@@ -11,11 +11,11 @@ namespace ClubCanvas.Core.Models
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public DateTime EventDate { get; set; }
+        public DateTime? EventDate { get; set; }
         public string? Location { get; set; }
         public int ClubId { get; set; }
         public Club Club {get; set;}
-        public List<ApplicationUser> Attendees { get; set; }
+        public List<ApplicationUser> Attendees { get; set; } = new List<ApplicationUser>();
 
         public void AddAttendee(ApplicationUser user)
         {

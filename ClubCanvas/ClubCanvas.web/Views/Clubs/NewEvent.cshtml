@@ -1,0 +1,28 @@
+@model ClubCanvas.web.Models.EventViewModel;
+
+<div class="text-center">
+    <h1 class="display-4">Welcome To Club Canvas</h1>
+    <h2 class="display4">Create a Club</h2>
+    <div class="form-floating">
+        <form asp-controller="Clubs" asp-action="NewEvent" method="post">
+            <div asp-validation-summary="All"></div>
+            <div class="form-group" id="form-div">ß
+                <label asp-for="Name" class="form-label">Event Name:</label>
+                <input asp-for="Name" class="form-control" placeholder="Chess club"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="form-label">The description for your event:</label>
+                <input asp-for="Description" class="form-control" placeholder="Description"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="Location" class="form-label">The location of your event:</label>
+                <input asp-for="Location" class="form-control" placeholder="Description"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventDate" class="form-label">The day of your event:</label>
+                <input asp-for="EventDate" type="datetime-local" class="form-control" placeholder="Description"/>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Event</button>
+        </form>
+    </div>
+</div>
