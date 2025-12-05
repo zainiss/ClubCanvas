@@ -352,4 +352,33 @@ public class ClubsController : Controller
         }
         return View(model);
     }
+
+    [HttpPost]
+    [Route("JoinClub/{clubId}")]
+    public async Task<IActionResult> JoinClub(int clubId)
+    {
+        try
+        {
+            var token = HttpContext.Session.GetString("JwtToken");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                ModelState.AddModelError("", "Could not authenticate session.");
+                return RedirectToAction($"clubs/{clubId}");
+            }
+
+            var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var user = await httpClient.GetFromJsonAsync<AuthResponseDto>("me");
+
+            var response = await httpClient.PostAsync($"JoinClub/{clubId}/{user.UserId}", null);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"An error occurred: {ex.Message}";
+        }
+
+        return RedirectToAction($"clubs/{clubId}");
+    }
 }

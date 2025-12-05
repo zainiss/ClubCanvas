@@ -2,6 +2,8 @@
 
 <div class="text-center mb-5">
     <h2 class="mb-4"><strong>@Model.Name</strong></h2>
+    <a asp-controller="Clubs" asp-action="JoinClub" class="btn btn-secondary" method="post" asp-route-clubId=@Model.Id>Join Club</a>
+
 </div>
 
 <div class="d-flex justify-content-center">

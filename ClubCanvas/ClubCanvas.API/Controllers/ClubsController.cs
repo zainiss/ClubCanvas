@@ -213,5 +213,30 @@ public class ClubsController : ControllerBase
         
         return NoContent(); // 204 No Content - standard for successful DELETE
     }
+
+    [HttpPost]
+    [Authorize]
+    [Route("JoinClub/{clubId}/{userId}")]
+     public async Task<ActionResult> JoinClub(int clubId, string userId)
+    {
+
+        var existingClub = await _clubsRepository.GetClubByIdAsync(clubId);
+        if (existingClub == null)
+        {
+            return NotFound($"Club with ID {clubId} not found");
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound($"User with ID {userId} not found");
+        }
+
+        existingClub.AddMember(user);
+
+        await _clubsRepository.UpdateClubAsync(existingClub);
+        
+        return NoContent(); // 204 No Content - standard for successful PUT
+    }
 }
 
