@@ -31,7 +31,10 @@
 
         <div>
             <h3 class="mb-3"><strong>Upcoming Events</strong></h3>
-            <a asp-controller="Clubs" asp-action="NewEvent" class="btn btn-secondary" asp-route-clubId=@Model.Id>Create event</a>
+            @if (ViewBag.CurrentUserId != null && Model.OwnerId == ViewBag.CurrentUserId)
+            {
+                <a asp-controller="Clubs" asp-action="NewEvent" class="btn btn-secondary" asp-route-clubId=@Model.Id>Create event</a>
+            }
             @if (Model.Events != null && Model.Events.Count > 0)
             {
                 <ul class="list-unstyled">

@@ -64,6 +64,18 @@ public class ClubsController : Controller
         {
             var club = await httpClient.GetFromJsonAsync<CreateClubDto>($"clubs/{id}");
 
+            // Get current user to check if they're the owner
+            var token = HttpContext.Session.GetString("JwtToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var currentUser = await httpClient.GetFromJsonAsync<AuthResponseDto>("auth/me");
+                if (currentUser != null && currentUser.Success)
+                {
+                    ViewBag.CurrentUserId = currentUser.UserId;
+                }
+            }
+
             return View(club);
             
         }
