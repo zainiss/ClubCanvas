@@ -202,7 +202,7 @@ public class EventsController : ControllerBase
         return Ok(new { message = "Successfully registered for event" });
     }
 
-    public async Task SendEmailAsync(string toEmail, string subject, string body)
+     async Task SendEmailAsync(string toEmail, string subject, string body)
     {
         //passforCCemail1
         using var message = new MailMessage();
