@@ -76,6 +76,7 @@ public class ClubsController : Controller
                 }
             }
 
+            ViewBag.ClubId = id; // Pass the route parameter to the view
             return View(club);
             
         }
@@ -161,7 +162,7 @@ public class ClubsController : Controller
         {
             Username = owner.UserName ?? string.Empty,
             Email = owner.Email ?? string.Empty,
-            OwnedClubs = clubs?.Where(c => c.OwnerEmail == owner.Email).ToList() ?? new List<CreateClubDto>(),
+            OwnedClubs = clubs?.Where(c => c.OwnerId == owner.UserId).ToList() ?? new List<CreateClubDto>(),
         };
 
         return View(userDto);
@@ -230,16 +231,27 @@ public class ClubsController : Controller
 
     [HttpGet]
     [Route("NewEvent")]
-    public async Task<IActionResult> NewEvent()
+    public async Task<IActionResult> NewEvent([FromQuery] int clubId)
     {
+        if (clubId == 0)
+        {
+            return RedirectToAction("Clubs");
+        }
+        ViewBag.ClubId = clubId;
         return View();
     }
 
 
     [HttpPost]
     [Route("NewEvent")]
-    public async Task<IActionResult> NewEvent(EventViewModel model, int clubId)
+    public async Task<IActionResult> NewEvent(EventViewModel model, [FromForm] int clubId)
     {
+        if (clubId == 0)
+        {
+            ModelState.AddModelError(string.Empty, "Invalid club ID");
+            return RedirectToAction("Clubs");
+        }
+
         if (ModelState.IsValid)
         {
             try
@@ -249,24 +261,27 @@ public class ClubsController : Controller
                 if (string.IsNullOrEmpty(token))
                 {
                     ModelState.AddModelError("", "Could not authenticate session.");
+                    ViewBag.ClubId = clubId;
                     return View(model);
                 }
 
                 var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("me");
+                var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("auth/me");
 
                 if (owner == null)
                 {
                     ModelState.AddModelError(string.Empty, "Please log in to create a club.");
+                    ViewBag.ClubId = clubId;
                     return View(model);
                 }
 
-                var club = await httpClient.GetFromJsonAsync<CreateClubDto>($"api/clubs/{clubId}");
+                var club = await httpClient.GetFromJsonAsync<CreateClubDto>($"clubs/{clubId}");
                 if (club == null)
                 {
                     ModelState.AddModelError(string.Empty, $"Could not find club with id");
+                    ViewBag.ClubId = clubId;
                     return View(model);
                 }
 
@@ -284,11 +299,20 @@ public class ClubsController : Controller
 
                     var response = await httpClient.PostAsJsonAsync("events", newEventDto);
 
-                    return RedirectToAction("clubs");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("ClubDetails", new { id = clubId });
+                    }
+                    else
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        ModelState.AddModelError(string.Empty, $"Failed to create event: {response.StatusCode} - {errorContent}");
+                    }
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, $"Must be club owner to add an event");
+                    ViewBag.ClubId = clubId;
                 }
             }
             catch (Exception ex)

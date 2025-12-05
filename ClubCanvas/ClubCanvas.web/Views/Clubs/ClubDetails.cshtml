@@ -33,7 +33,7 @@
             <h3 class="mb-3"><strong>Upcoming Events</strong></h3>
             @if (ViewBag.CurrentUserId != null && Model.OwnerId == ViewBag.CurrentUserId)
             {
-                <a asp-controller="Clubs" asp-action="NewEvent" class="btn btn-secondary" asp-route-clubId=@Model.Id>Create event</a>
+                <a href="@Url.Action("NewEvent", "Clubs", new { clubId = ViewBag.ClubId ?? Model.Id })" class="btn btn-secondary">Create event</a>
             }
             @if (Model.Events != null && Model.Events.Count > 0)
             {
@@ -46,7 +46,7 @@
                         {
                             <p class="mb-1 mt-2">@e.Description</p>
                         }
-                        <p class="mb-1"><strong>Date:</strong> @(e.EventDate?.ToString("MMMM dd, yyyy 'at' h:mm tt") ?? "TBD")</p>
+                        <p class="mb-1"><strong>Date:</strong> @e.EventDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
                         @if (!string.IsNullOrEmpty(e.Location))
                         {
                             <p class="mb-0"><strong>Location:</strong> @e.Location</p>
