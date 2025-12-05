@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 using ClubCanvas.Shared.DTOs;
+using System.Net.Mail;
+using System.Net;
 
 namespace ClubCanvas.API.Controllers;
 
@@ -183,8 +185,32 @@ public class EventsController : ControllerBase
         eventItem.Attendees.Add(user);
 
         await context.SaveChangesAsync();
+
+        await SendEmailAsync(user.Email, "Registered for an Event!", $"You have registered for {eventItem.Name} at {eventItem.Location} on {eventItem.EventDate}");
         
         return Ok(new { message = "Successfully registered for event" });
     }
+
+    public async Task SendEmailAsync(string toEmail, string subject, string body)
+    {
+        //passforCCemail1
+        using var message = new MailMessage();
+        message.From = new MailAddress("SheridanCSAssignments@gmail.com", "ClubCanvas");
+        message.To.Add(toEmail);
+        message.Subject = subject;
+        message.Body = body;
+        message.IsBodyHtml = true;
+
+        using var client = new SmtpClient("smtp.gmail.com", 587)
+        {
+            Credentials = new NetworkCredential("SheridanCSAssignments@gmail.com", "wvpq ahen imwc jurl"),
+            EnableSsl = true
+        };
+
+        message.To.Add(toEmail);
+
+        await client.SendMailAsync(message);
+    }
 }
+
 
