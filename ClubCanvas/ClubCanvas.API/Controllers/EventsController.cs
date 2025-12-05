@@ -212,5 +212,3 @@ public class EventsController : ControllerBase
         await client.SendMailAsync(message);
     }
 }
-
-
