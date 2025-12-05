@@ -36,5 +36,6 @@ public class CreateEventDto
     public DateTime EventDate { get; set; }
     
     public string? Location { get; set; }
+    public string? ClubId { get; set; }
 }
 

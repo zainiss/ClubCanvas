@@ -124,9 +124,24 @@ public class ClubsController : Controller
     }
 
     [Route("Canvas")]
-    public IActionResult Canvas()
+    public async Task<IActionResult> Canvas()
     {
-        return View();
+        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+
+        var token = HttpContext.Session.GetString("JwtToken");
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("me");
+        var clubs = await httpClient.GetFromJsonAsync<List<CreateClubDto>>("clubs");
+        var events = await httpClient.GetFromJsonAsync<List<CreateEventDto>>("events");
+
+
+        var userDto = new UserDto
+        {
+            Clubs = clubs?.Where(c => c.Members.Any(m => m.Email == owner.Email)).ToList()
+        };
+
+        return View(userDto);
     }
 
     [HttpGet]
@@ -196,7 +211,6 @@ public class ClubsController : Controller
                     $"Unexpected error: {ex.Message}");
             }
         }
-        
         return View(model);
     }
 }

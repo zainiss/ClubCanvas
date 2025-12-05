@@ -1,9 +1,46 @@
+@model ClubCanvas.Shared.DTOs.UserDto
+
 <div style="display: grid; grid-template-columns: 1fr 1fr 2fr;">
     <div>
         <h2>Your Events:</h2>
+        @if (Model.Clubs != null)
+        {
+             @foreach (var club in Model.Clubs)
+            {
+                @if (club.Events != null)
+                {
+                    @foreach (var e in club.Events)
+                    {
+                        <li class="mb-3 p-3 border rounded">
+                            <a asp-controller="Clubs" asp-action="ClubDetails" asp-route-id="@club.Id" class="text-decoration-none">
+                                <strong>@e.Name</strong>
+                            </a>
+                            <p class="mb-0 mt-2">@e.Location</p>
+                            <p class="mb-0 mt-2">@e.EventDate</p>
+                        </li>
+                    }
+                }
+            }
+        }
     </div>
     <div>
         <h2>Your Clubs:</h2>
+         <div class="text-center" style="max-width: 800px; width: 100%;">
+        <ul class="list-unstyled">
+        @if (Model.Clubs != null)
+        {
+             @foreach (var club in Model.Clubs)
+            {
+                <li class="mb-3 p-3 border rounded">
+                    <a asp-controller="Clubs" asp-action="ClubDetails" asp-route-id="@club.Id" class="text-decoration-none">
+                        <strong>@club.Name</strong>
+                    </a>
+                    <p class="mb-0 mt-2">@club.Description</p>
+                </li>
+            }
+        }
+        </ul>
+    </div>
         <a asp-controller="Clubs" asp-action="NewClub" class="btn btn-primary">Create a Club</a>
     </div>
 </div>
