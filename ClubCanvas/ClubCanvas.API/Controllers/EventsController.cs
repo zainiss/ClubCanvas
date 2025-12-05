@@ -42,13 +42,24 @@ public class EventsController : ControllerBase
 
         // Get all events
         var allEvents = await _eventsRepository.GetAllEventsAsync();
-        return Ok(allEvents.Select(c => new CreateEventDto {
-            Id = c.Id,
-            Name = c.Name ?? string.Empty,
-            Description = c.Description,
-            Location = c.Location,
-            EventDate = c.EventDate ?? DateTime.MinValue,
-            ClubId = c.ClubId
+        return Ok(allEvents.Select(c => {
+            // Map attendees to DTOs
+            var attendeesDto = c.Attendees?.Select(a => new UserDto
+            {
+                Username = a.UserName ?? string.Empty,
+                Email = a.Email ?? string.Empty
+            }).ToList() ?? new List<UserDto>();
+
+            return new CreateEventDto
+            {
+                Id = c.Id,
+                Name = c.Name ?? string.Empty,
+                Description = c.Description,
+                Location = c.Location,
+                EventDate = c.EventDate ?? DateTime.MinValue,
+                ClubId = c.ClubId,
+                Attendees = attendeesDto
+            };
         }).ToList());
     }
 
@@ -177,7 +188,7 @@ public class EventsController : ControllerBase
             return BadRequest("User is already registered for this event");
         }
 
-        // Add user to attendees - EF Core will handle the many-to-many relationship
+        
         if (eventItem.Attendees == null)
         {
             eventItem.Attendees = new List<ApplicationUser>();

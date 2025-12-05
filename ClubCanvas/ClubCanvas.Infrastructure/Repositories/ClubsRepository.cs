@@ -22,6 +22,7 @@ public class ClubsRepository : IClubsRepository
     {
         return await _context.Clubs
             .Include(c => c.Events)
+                .ThenInclude(e => e.Attendees)
             .Include(c => c.Members)
             .Include(c => c.Owner)
             .ToListAsync();
@@ -31,6 +32,7 @@ public class ClubsRepository : IClubsRepository
     {
         return await _context.Clubs
             .Include(c => c.Events)
+                .ThenInclude(e => e.Attendees)
             .Include(c => c.Members)
             .Include(c => c.Owner)
             .FirstOrDefaultAsync(c => c.Id == id);
