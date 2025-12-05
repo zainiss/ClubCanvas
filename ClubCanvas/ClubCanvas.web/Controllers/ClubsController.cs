@@ -126,19 +126,30 @@ public class ClubsController : Controller
     [Route("Canvas")]
     public async Task<IActionResult> Canvas()
     {
-        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
-
         var token = HttpContext.Session.GetString("JwtToken");
+        if (string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction("Login", "Home");
+        }
+
+        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("me");
+        var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("auth/me");
         var clubs = await httpClient.GetFromJsonAsync<List<CreateClubDto>>("clubs");
         var events = await httpClient.GetFromJsonAsync<List<CreateEventDto>>("events");
 
+        
+        if (owner == null || !owner.Success)
+        {
+            return RedirectToAction("Login", "Home");
+        }
 
         var userDto = new UserDto
         {
-            Clubs = clubs?.Where(c => c.Members.Any(m => m.Email == owner.Email)).ToList()
+            Username = owner.UserName ?? string.Empty,
+            Email = owner.Email ?? string.Empty,
+            OwnedClubs = clubs?.Where(c => c.OwnerEmail == owner.Email).ToList() ?? new List<CreateClubDto>(),
         };
 
         return View(userDto);
@@ -171,7 +182,7 @@ public class ClubsController : Controller
                 var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("me");
+                var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("auth/me");
 
                 if (owner == null)
                 {
