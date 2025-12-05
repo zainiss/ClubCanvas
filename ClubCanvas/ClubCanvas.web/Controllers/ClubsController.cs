@@ -63,6 +63,10 @@ public class ClubsController : Controller
         try
         {
             var club = await httpClient.GetFromJsonAsync<CreateClubDto>($"clubs/{id}");
+            
+            // Get events for this club (same approach as Canvas)
+            var allEvents = await httpClient.GetFromJsonAsync<List<CreateEventDto>>("events");
+            club.Events = allEvents?.Where(e => e.ClubId == id).ToList() ?? new List<CreateEventDto>();
 
             // Get current user to check if they're the owner
             var token = HttpContext.Session.GetString("JwtToken");
@@ -109,26 +113,15 @@ public class ClubsController : Controller
         
         try
         {
-            // Get all clubs to find the event
-            var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
+            // Get the event directly from the API (same approach as Canvas)
+            var eventItem = await httpClient.GetFromJsonAsync<CreateEventDto>($"events/{id}");
             
-            if (clubs != null)
+            if (eventItem == null)
             {
-                foreach (Club c in clubs)
-                {
-                    if (c.Events != null)
-                    {
-                        foreach (Event e in c.Events)
-                        {
-                            if (e.Id == id)
-                            {
-                                return View(e);
-                            }
-                        }
-                    }
-                }
+                return NotFound();
             }
-            return NotFound();
+            
+            return View(eventItem);
         }
         catch (HttpRequestException)
         {

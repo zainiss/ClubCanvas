@@ -50,7 +50,7 @@ public class EventsController : ControllerBase
     // GET: api/events/5
     // Gets a specific event
     [HttpGet("{id}")]
-    public async Task<ActionResult<Event>> GetEventById(int id)
+    public async Task<ActionResult<CreateEventDto>> GetEventById(int id)
     {
         var eventItem = await _eventsRepository.GetEventByIdAsync(id);
         if (eventItem == null)
@@ -58,7 +58,15 @@ public class EventsController : ControllerBase
             return NotFound($"Event with ID {id} not found");
         }
 
-        return Ok(eventItem);
+        return Ok(new CreateEventDto
+        {
+            Id = eventItem.Id,
+            Name = eventItem.Name ?? string.Empty,
+            Description = eventItem.Description,
+            EventDate = eventItem.EventDate ?? DateTime.MinValue,
+            Location = eventItem.Location,
+            ClubId = eventItem.ClubId
+        });
     }
 
     // POST: api/events
