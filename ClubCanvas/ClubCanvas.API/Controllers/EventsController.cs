@@ -1,5 +1,8 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 using ClubCanvas.Shared.DTOs;
@@ -39,10 +42,10 @@ public class EventsController : ControllerBase
         var allEvents = await _eventsRepository.GetAllEventsAsync();
         return Ok(allEvents.Select(c => new CreateEventDto {
             Id = c.Id,
-            Name = c.Name,
+            Name = c.Name ?? string.Empty,
             Description = c.Description,
             Location = c.Location,
-            EventDate = c.EventDate,
+            EventDate = c.EventDate ?? DateTime.MinValue,
             ClubId = c.ClubId
         }).ToList());
     }
@@ -58,6 +61,13 @@ public class EventsController : ControllerBase
             return NotFound($"Event with ID {id} not found");
         }
 
+        // Map attendees to DTOs
+        var attendeesDto = eventItem.Attendees?.Select(a => new UserDto
+        {
+            Username = a.UserName ?? string.Empty,
+            Email = a.Email ?? string.Empty
+        }).ToList() ?? new List<UserDto>();
+
         return Ok(new CreateEventDto
         {
             Id = eventItem.Id,
@@ -65,7 +75,8 @@ public class EventsController : ControllerBase
             Description = eventItem.Description,
             EventDate = eventItem.EventDate ?? DateTime.MinValue,
             Location = eventItem.Location,
-            ClubId = eventItem.ClubId
+            ClubId = eventItem.ClubId,
+            Attendees = attendeesDto
         });
     }
 
@@ -130,6 +141,50 @@ public class EventsController : ControllerBase
 
         await _eventsRepository.DeleteEventAsync(id);
         return NoContent();
+    }
+
+    // POST: api/events/{id}/register
+    [HttpPost("{id}/register")]
+    [Authorize] // Requires JWT token
+    public async Task<ActionResult> RegisterForEvent(int id, [FromServices] UserManager<ApplicationUser> userManager, [FromServices] Infrastructure.Data.AppDbContext context)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized("User not authenticated");
+        }
+
+        var eventItem = await context.Events
+            .Include(e => e.Attendees)
+            .FirstOrDefaultAsync(e => e.Id == id);
+            
+        if (eventItem == null)
+        {
+            return NotFound($"Event with ID {id} not found");
+        }
+
+        var user = await userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return NotFound("User not found");
+        }
+
+        // Check if user is already registered
+        if (eventItem.Attendees != null && eventItem.Attendees.Any(a => a.Id == userId))
+        {
+            return BadRequest("User is already registered for this event");
+        }
+
+        // Add user to attendees - EF Core will handle the many-to-many relationship
+        if (eventItem.Attendees == null)
+        {
+            eventItem.Attendees = new List<ApplicationUser>();
+        }
+        eventItem.Attendees.Add(user);
+
+        await context.SaveChangesAsync();
+        
+        return Ok(new { message = "Successfully registered for event" });
     }
 }
 

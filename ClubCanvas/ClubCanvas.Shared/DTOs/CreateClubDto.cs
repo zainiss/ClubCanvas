@@ -40,5 +40,6 @@ public class CreateEventDto
     public string? Location { get; set; }
     [Required]
     public int ClubId { get; set; }
+    public List<UserDto>? Attendees { get; set; }
 }
 
