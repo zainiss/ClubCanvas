@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using ClubCanvas.Core;
 using ClubCanvas.web.Models;
 using Microsoft.AspNetCore.Identity;
-using ClubCanvas.Shared.Models;
 
 namespace ClubCanvas.web.Controllers;
 
@@ -127,51 +126,51 @@ public class ClubsController : Controller
     }
 
 
-    [HttpPost]
-    [Route("NewClub")]
-    public async Task<IActionResult> NewClub(ClubViewModel model)
-    {
-        if (ModelState.IsValid)
-        {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            var userObject = _userManager.GetUserAsync(User).Result;
+//     [HttpPost]
+//     [Route("NewClub")]
+//     public async Task<IActionResult> NewClub(ClubViewModel model)
+//     {
+//     //     if (ModelState.IsValid)
+//     //     {
+//     //         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+//     //         var userObject = _userManager.GetUserAsync(User).Result;
 
-            if (userId == null || userObject == null)
-            {
-                ModelState.AddModelError(string.Empty, "Could not get active user");
-                return View(model);
-            }
+//     //         if (userId == null || userObject == null)
+//     //         {
+//     //             ModelState.AddModelError(string.Empty, "Could not get active user");
+//     //             return View(model);
+//     //         }
 
-            var newClubDto = new CreateClubDto
-            {
-                Name = model.Name,
-                Description = model.Description,
-                OwnerId = userId,
-                Owner = userObject,
-                Image = model.Image
-            };
+//     //         var newClubDto = new CreateClubDto
+//     //         {
+//     //             Name = model.Name,
+//     //             Description = model.Description,
+//     //             OwnerId = userId,
+//     //             Owner = userObject,
+//     //             Image = model.Image
+//     //         };
 
-            try
-            {
-                var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
-                var response = await httpClient.PostAsJsonAsync("clubs", newClubDto);
+//     //         try
+//     //         {
+//     //             var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+//     //             var response = await httpClient.PostAsJsonAsync("clubs", newClubDto);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    // Redirect to list of clubs after successful creation
-                    return RedirectToAction("Clubs");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Failed to create club via API.");
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-            }
-        }
+//     //             if (response.IsSuccessStatusCode)
+//     //             {
+//     //                 // Redirect to list of clubs after successful creation
+//     //                 return RedirectToAction("Clubs");
+//     //             }
+//     //             else
+//     //             {
+//     //                 ModelState.AddModelError(string.Empty, "Failed to create club via API.");
+//     //             }
+//     //         }
+//     //         catch (HttpRequestException ex)
+//     //         {
+//     //             ModelState.AddModelError(string.Empty, ex.Message);
+//     //         }
+//     //     }
 
-        return View(model);
-    }
+//     //     return View(model);
+//     // }
 }

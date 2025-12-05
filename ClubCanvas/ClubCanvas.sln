@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClubCanvas.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClubCanvas.API", "ClubCanvas.API\ClubCanvas.API.csproj", "{646AAFC0-8081-4CB2-9599-9F676336E42F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClubCanvas.Shared", "ClubCanvas.Shared\ClubCanvas.Shared.csproj", "{E6F332E0-B3B1-4028-98A3-317F13AE51E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{646AAFC0-8081-4CB2-9599-9F676336E42F}.Release|x64.Build.0 = Release|Any CPU
 		{646AAFC0-8081-4CB2-9599-9F676336E42F}.Release|x86.ActiveCfg = Release|Any CPU
 		{646AAFC0-8081-4CB2-9599-9F676336E42F}.Release|x86.Build.0 = Release|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Debug|x64.Build.0 = Debug|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Debug|x86.Build.0 = Debug|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Release|x64.ActiveCfg = Release|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Release|x64.Build.0 = Release|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Release|x86.ActiveCfg = Release|Any CPU
+		{E6F332E0-B3B1-4028-98A3-317F13AE51E2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
