@@ -3,17 +3,20 @@ using ClubCanvas.Core.Models;
 using System.Net.Http.Json;
 using ClubCanvas.Core;
 using ClubCanvas.web.Models;
+using Microsoft.AspNetCore.Identity;
+using ClubCanvas.Shared.Models;
 
 namespace ClubCanvas.web.Controllers;
 
 public class ClubsController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IClubsRepository _clubs;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ClubsController(IHttpClientFactory httpClientFactory)
+    public ClubsController(IHttpClientFactory httpClientFactory, UserManager<ApplicationUser> userManager, IClubsRepository clubs)
     {
         _httpClientFactory = httpClientFactory;
+        _userManager = userManager;
     }
 
     [Route("Clubs")]
@@ -116,6 +119,7 @@ public class ClubsController : Controller
         return View();
     }
 
+    [HttpGet]
     [Route("NewClub")]
     public async Task<IActionResult> NewClub()
     {
@@ -129,15 +133,43 @@ public class ClubsController : Controller
     {
         if (ModelState.IsValid)
         {
-            var newClub = new Club
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userObject = _userManager.GetUserAsync(User).Result;
+
+            if (userId == null || userObject == null)
+            {
+                ModelState.AddModelError(string.Empty, "Could not get active user");
+                return View(model);
+            }
+
+            var newClubDto = new CreateClubDto
             {
                 Name = model.Name,
                 Description = model.Description,
-                OwnerId = model.OwnerId,
+                OwnerId = userId,
+                Owner = userObject,
                 Image = model.Image
             };
 
-            await _clubs.AddClubAsync(newClub);
+            try
+            {
+                var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+                var response = await httpClient.PostAsJsonAsync("clubs", newClubDto);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Redirect to list of clubs after successful creation
+                    return RedirectToAction("Clubs");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to create club via API.");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
         }
 
         return View(model);

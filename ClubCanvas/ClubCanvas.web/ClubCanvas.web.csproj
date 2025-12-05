@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ClubCanvas.Core\ClubCanvas.Core.csproj" />
     <ProjectReference Include="..\ClubCanvas.Infrastructure\ClubCanvas.Infrastructure.csproj" />
+    <ProjectReference Include="..\ClubCanvas.Shared\ClubCanvas.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

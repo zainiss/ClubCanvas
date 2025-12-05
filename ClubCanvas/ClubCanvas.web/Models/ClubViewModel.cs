@@ -13,8 +13,6 @@ namespace ClubCanvas.web.Models
         public string Name { get; set; } = string.Empty;
         [Required]
         public string Description { get; set; } = string.Empty;
-        [Required]
-        public string OwnerId { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
     }
 }
