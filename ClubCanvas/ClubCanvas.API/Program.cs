@@ -71,7 +71,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
 app.MapOpenApi();
+
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

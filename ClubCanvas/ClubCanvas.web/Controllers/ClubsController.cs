@@ -39,17 +39,9 @@ public class ClubsController : Controller
 
             return View(clubs);
         }
-        catch (HttpRequestException ex)
-        {
-            // Log the error for debugging
-            Console.WriteLine($"Error calling API: {ex.Message}");
-            // API is not available - return empty list
-            return View(new List<Club>());
-        }
         catch (Exception ex)
         {
-            // Log any other errors
-            Console.WriteLine($"Unexpected error: {ex.Message}");
+            Console.WriteLine($"Error: {ex.Message}");
             return View(new List<Club>());
         }
     }
@@ -64,11 +56,9 @@ public class ClubsController : Controller
         {
             var club = await httpClient.GetFromJsonAsync<CreateClubDto>($"clubs/{id}");
             
-            // Get events for this club (same approach as Canvas)
             var allEvents = await httpClient.GetFromJsonAsync<List<CreateEventDto>>("events");
             club.Events = allEvents?.Where(e => e.ClubId == id).ToList() ?? new List<CreateEventDto>();
 
-            // Get current user to check if they're the owner
             var token = HttpContext.Session.GetString("JwtToken");
             if (!string.IsNullOrEmpty(token))
             {
@@ -80,7 +70,7 @@ public class ClubsController : Controller
                 }
             }
 
-            ViewBag.ClubId = id; // Pass the route parameter to the view
+            ViewBag.ClubId = id;
             return View(club);
             
         }
@@ -233,7 +223,6 @@ public class ClubsController : Controller
                     return View(model);
                 }
 
-                // Create DTO
                 var newClubDto = new CreateClubDto
                 {
                     Name = model.Name,
@@ -246,7 +235,6 @@ public class ClubsController : Controller
                     Members = new List<UserDto>()
                 };
 
-                // Make the API call
                 var response = await httpClient.PostAsJsonAsync("clubs", newClubDto);
 
                 return RedirectToAction("clubs");
@@ -317,7 +305,6 @@ public class ClubsController : Controller
 
                 if (owner.UserId == club.OwnerId)
                 {
-                    // Create DTO
                     var newEventDto = new CreateEventDto
                     {
                         Name = model.Name,
