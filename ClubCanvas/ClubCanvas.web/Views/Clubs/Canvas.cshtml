@@ -1,13 +1,23 @@
 @model ClubCanvas.Shared.DTOs.UserDto
 
 <div class="text-center mb-5">
-    <span><strong>Canvas</strong></span>
-    <span><strong>Welcome, @Model.Username</strong></span>
-    <span><strong>Your clubs:</strong></span>
-    <ul class="list-unstyled">
-    @foreach (var club in Model.OwnedClubs)
+    <h2><strong>Canvas</strong></h2>
+    <p><strong>Welcome, @Model.Username</strong></p>
+    <div class="mb-3">
+        <a asp-controller="Clubs" asp-action="NewClub" class="btn btn-primary">Create Club</a>
+    </div>
+    <h4><strong>Your clubs:</strong></h4>
+    @if (Model.OwnedClubs != null && Model.OwnedClubs.Any())
     {
-        <li>@club.Name</li>
+        <ul class="list-unstyled">
+        @foreach (var club in Model.OwnedClubs)
+        {
+            <li>@club.Name</li>
+        }
+        </ul>
     }
-    </ul>
+    else
+    {
+        <p>You haven't created any clubs yet.</p>
+    }
 </div>

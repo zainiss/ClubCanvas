@@ -27,13 +27,24 @@ public class ClubsController : ControllerBase
     public async Task<ActionResult<List<CreateClubDto>>> GetAllClubs()
     {
         var clubs = await _clubsRepository.GetAllClubsAsync();
-        return Ok(clubs.Select(c => new CreateClubDto {
-            Id = c.Id,
-            Name = c.Name,
-            Description = c.Description,
-            Image = c.Image,
-            OwnerId = c.OwnerId
-        }).ToList());
+        var clubsDto = new List<CreateClubDto>();
+        
+        foreach (var club in clubs)
+        {
+            var owner = await _userManager.FindByIdAsync(club.OwnerId);
+            clubsDto.Add(new CreateClubDto
+            {
+                Id = club.Id,
+                Name = club.Name,
+                Description = club.Description,
+                Image = club.Image,
+                OwnerId = club.OwnerId,
+                OwnerEmail = owner?.Email,
+                OwnerName = owner?.UserName
+            });
+        }
+        
+        return Ok(clubsDto);
     }
 
     // GET: api/clubs/5
@@ -49,6 +60,24 @@ public class ClubsController : ControllerBase
 
         var owner = await _userManager.FindByIdAsync(club.OwnerId);
         
+        // Map events to DTOs
+        var eventsDto = club.Events?.Select(e => new CreateEventDto
+        {
+            Id = e.Id,
+            Name = e.Name ?? string.Empty,
+            Description = e.Description,
+            EventDate = e.EventDate ?? DateTime.MinValue,
+            Location = e.Location,
+            ClubId = e.ClubId
+        }).ToList() ?? new List<CreateEventDto>();
+        
+        // Map members to DTOs
+        var membersDto = club.Members?.Select(m => new UserDto
+        {
+            Username = m.UserName ?? string.Empty,
+            Email = m.Email ?? string.Empty
+        }).ToList() ?? new List<UserDto>();
+        
         return Ok(new CreateClubDto
         {
             Id = club.Id,
@@ -56,8 +85,10 @@ public class ClubsController : ControllerBase
             Description = club.Description,
             Image = club.Image,
             OwnerId = club.OwnerId,
-            OwnerName = owner.UserName,
-            OwnerEmail = owner.Email
+            OwnerName = owner?.UserName,
+            OwnerEmail = owner?.Email,
+            Events = eventsDto,
+            Members = membersDto
         });
     }
 

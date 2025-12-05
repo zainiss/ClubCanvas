@@ -34,7 +34,8 @@ public class CreateEventDto
     
     public string? Description { get; set; }
     
-    public DateTime? EventDate { get; set; }
+    [Required]
+    public DateTime EventDate { get; set; }
     
     public string? Location { get; set; }
     [Required]
