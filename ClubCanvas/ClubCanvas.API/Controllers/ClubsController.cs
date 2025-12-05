@@ -46,7 +46,13 @@ public class ClubsController : ControllerBase
             return NotFound($"Club with ID {id} not found");
         }
         
-        return Ok(club);
+        return Ok(new CreateClubDto
+        {
+            Name = club.Name,
+            Description = club.Description,
+            Image = club.Image,
+            OwnerId = club.OwnerId
+        });
     }
 
     // POST: api/clubs

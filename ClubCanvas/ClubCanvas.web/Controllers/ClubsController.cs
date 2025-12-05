@@ -37,14 +37,6 @@ public class ClubsController : Controller
                 return NotFound();
             }
 
-            var dto = clubs.Select(c => new CreateClubDto
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Description = c.Description,
-                Image = c.Image,
-                OwnerId = c.OwnerId
-            }).ToList();
             return View(clubs);
         }
         catch (HttpRequestException ex)
@@ -72,16 +64,7 @@ public class ClubsController : Controller
         {
             var club = await httpClient.GetFromJsonAsync<Club>($"club/{id}");
 
-            var dto = new CreateClubDto
-            {
-                Id = club.Id,
-                Name = club.Name,
-                Description = club.Description,
-                Image = club.Image,
-                OwnerId = club.OwnerId
-            };
-
-            return View(dto);
+            return View(club);
             
         }
         catch (HttpRequestException)
@@ -162,36 +145,36 @@ public class ClubsController : Controller
         {
             try
             {
-                // Get user ID (using the correct method)
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                var userId = userIdClaim?.Value;
+                var token = HttpContext.Session.GetString("JwtToken");
 
-                if (string.IsNullOrEmpty(userId))
+                if (string.IsNullOrEmpty(token))
+                {
+                    ModelState.AddModelError("", "Could not authenticate session.");
+                    return View(model);
+                }
+
+                var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var owner = await httpClient.GetFromJsonAsync<AuthResponseDto>("me");
+
+                if (owner == null)
                 {
                     ModelState.AddModelError(string.Empty, "Please log in to create a club.");
                     return View(model);
                 }
 
-                var token = HttpContext.Session.GetString("JwtToken");
-
-                if (string.IsNullOrEmpty(token))
-                {
-                    ModelState.AddModelError("", "You must be logged in to create a club.");
-                    return View(model);
-                }
-
-                var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
-                
                 // Create DTO
                 var newClubDto = new CreateClubDto
                 {
                     Name = model.Name,
                     Description = model.Description,
                     Image = model.Image,
-                    OwnerId = userId,
-                    Events = new List<CreateEventDto>()
+                    OwnerId = owner.UserId,
+                    OwnerName = owner.UserName,
+                    OwnerEmail = owner.Email,
+                    Events = new List<CreateEventDto>(),
+                    Members = new List<UserDto>()
                 };
 
                 // Make the API call

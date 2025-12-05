@@ -15,11 +15,14 @@ public class CreateClubDto
     public string Description { get; set; } = string.Empty;
 
     [Required]
-    public string OwnerId { get; set; }
+    public string? OwnerId { get; set; }
+    public string? OwnerEmail { get; set; }
+    public string? OwnerName { get; set; }
     
     public string? Image { get; set; }
     
     public List<CreateEventDto>? Events { get; set; }
+    public List<UserDto>? Members {get; set;}
 }
 
 public class CreateEventDto

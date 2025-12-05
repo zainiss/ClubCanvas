@@ -1,4 +1,4 @@
-@model ClubCanvas.Core.Models.Club
+@model ClubCanvas.Shared.DTOs.CreateClubDto
 
 <div class="text-center mb-5">
     <h2 class="mb-4"><strong>@Model.Name</strong></h2>
@@ -9,9 +9,9 @@
         <p class="mb-4">@Model.Description</p>
 
         <div class="mb-4">
-            @if (Model.Owner != null)
+            @if (Model.OwnerId != null)
             {
-                <p><strong>Owner:</strong> @Model.Owner.UserName (@Model.Owner.Email)</p>
+                <p><strong>Owner:</strong> @Model.OwnerName (@Model.OwnerEmail)</p>
             }
             else
             {
@@ -21,9 +21,9 @@
             @if (Model.Members != null && Model.Members.Count > 0)
             {
                 <ul class="list-unstyled">
-                @foreach (var member in Model.Members)
+                @foreach (ClubCanvas.Shared.DTOs.UserDto member in Model.Members)
                 {
-                    <li>@member.UserName (@member.Email)</li>
+                    <li>@member.Username (@member.Email)</li>
                 }
                 </ul>
             }
