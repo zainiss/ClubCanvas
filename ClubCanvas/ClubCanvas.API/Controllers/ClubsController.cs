@@ -24,20 +24,21 @@ public class ClubsController : ControllerBase
 
     // GET: api/clubs
     [HttpGet]
-    public async Task<ActionResult<List<Club>>> GetAllClubs()
+    public async Task<ActionResult<List<CreateClubDto>>> GetAllClubs()
     {
         var clubs = await _clubsRepository.GetAllClubsAsync();
         return Ok(clubs.Select(c => new CreateClubDto {
+            Id = c.Id,
             Name = c.Name,
             Description = c.Description,
             Image = c.Image,
             OwnerId = c.OwnerId
-        }));
+        }).ToList());
     }
 
     // GET: api/clubs/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Club>> GetClubById(int id)
+    public async Task<ActionResult<CreateClubDto>> GetClubById(int id)
     {
         var club = await _clubsRepository.GetClubByIdAsync(id);
         
@@ -45,13 +46,17 @@ public class ClubsController : ControllerBase
         {
             return NotFound($"Club with ID {id} not found");
         }
+
+        var owner = await _userManager.FindByIdAsync(club.OwnerId);
         
         return Ok(new CreateClubDto
         {
             Name = club.Name,
             Description = club.Description,
             Image = club.Image,
-            OwnerId = club.OwnerId
+            OwnerId = club.OwnerId,
+            OwnerName = owner.UserName,
+            OwnerEmail = owner.Email
         });
     }
 

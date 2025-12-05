@@ -30,7 +30,7 @@ public class ClubsController : Controller
         
         try
         {
-             var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
+             var clubs = await httpClient.GetFromJsonAsync<List<CreateClubDto>>("clubs");
             
             if (clubs == null)
             {
@@ -62,7 +62,7 @@ public class ClubsController : Controller
         
         try
         {
-            var club = await httpClient.GetFromJsonAsync<Club>($"club/{id}");
+            var club = await httpClient.GetFromJsonAsync<CreateClubDto>($"clubs/{id}");
 
             return View(club);
             
@@ -179,6 +179,8 @@ public class ClubsController : Controller
 
                 // Make the API call
                 var response = await httpClient.PostAsJsonAsync("clubs", newClubDto);
+
+                return RedirectToAction("clubs");
             }
             catch (HttpRequestException ex)
             {
