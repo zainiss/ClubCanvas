@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using ClubCanvas.API.Models;
+using ClubCanvas.Shared.DTOs;
 using ClubCanvas.Core.Models;
 
 namespace ClubCanvas.API.Controllers;

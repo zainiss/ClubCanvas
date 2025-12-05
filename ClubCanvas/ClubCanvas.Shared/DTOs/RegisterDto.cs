@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ClubCanvas.API.Models;
+namespace ClubCanvas.Shared.DTOs;
 
 public class RegisterDto
 {

@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Dynamic;
 
-namespace ClubCanvas.API.Models;
+namespace ClubCanvas.Shared.DTOs;
 
 public class CreateClubDto
 {
@@ -9,6 +11,9 @@ public class CreateClubDto
     
     [Required]
     public string Description { get; set; } = string.Empty;
+
+    [Required]
+    public string OwnerId { get; set; }
     
     public string? Image { get; set; }
     

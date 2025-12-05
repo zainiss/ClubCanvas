@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ClubCanvas.API.Models;
+using ClubCanvas.Shared.DTOs;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 
@@ -27,7 +27,12 @@ public class ClubsController : ControllerBase
     public async Task<ActionResult<List<Club>>> GetAllClubs()
     {
         var clubs = await _clubsRepository.GetAllClubsAsync();
-        return Ok(clubs);
+        return Ok(clubs.Select(c => new CreateClubDto {
+            Name = c.Name,
+            Description = c.Description,
+            Image = c.Image,
+            OwnerId = c.OwnerId
+        }));
     }
 
     // GET: api/clubs/5

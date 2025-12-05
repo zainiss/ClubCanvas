@@ -4,6 +4,10 @@ using System.Net.Http.Json;
 using ClubCanvas.Core;
 using ClubCanvas.web.Models;
 using Microsoft.AspNetCore.Identity;
+using ClubCanvas.Shared.DTOs;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using System.Net.Http.Headers;
 
 namespace ClubCanvas.web.Controllers;
 
@@ -16,6 +20,55 @@ public class ClubsController : Controller
     {
         _httpClientFactory = httpClientFactory;
         _userManager = userManager;
+    }
+
+    [HttpGet]
+    [Route("TestConnection")]
+    public async Task<IActionResult> TestConnection()
+    {
+        var results = new List<string>();
+        
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+            
+            // Test 1: Try to reach the API base
+            results.Add($"Testing connection to: {httpClient.BaseAddress}");
+            
+            // Test 2: Try a simple GET
+            try
+            {
+                var response = await httpClient.GetAsync("");
+                results.Add($"GET / Response: {(int)response.StatusCode} {response.StatusCode}");
+                
+                if (response.Content != null)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    results.Add($"GET / Content: {content}");
+                }
+            }
+            catch (Exception ex)
+            {
+                results.Add($"GET / Failed: {ex.Message}");
+            }
+            
+            // Test 3: Try the clubs endpoint
+            try
+            {
+                var response = await httpClient.GetAsync("clubs");
+                results.Add($"GET /clubs Response: {(int)response.StatusCode} {response.StatusCode}");
+            }
+            catch (Exception ex)
+            {
+                results.Add($"GET /clubs Failed: {ex.Message}");
+            }
+            
+            return Content(string.Join("\n", results));
+        }
+        catch (Exception ex)
+        {
+            return Content($"Setup failed: {ex.Message}\n\nStack: {ex.StackTrace}");
+        }
     }
 
     [Route("Clubs")]
@@ -126,51 +179,64 @@ public class ClubsController : Controller
     }
 
 
-//     [HttpPost]
-//     [Route("NewClub")]
-//     public async Task<IActionResult> NewClub(ClubViewModel model)
-//     {
-//     //     if (ModelState.IsValid)
-//     //     {
-//     //         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-//     //         var userObject = _userManager.GetUserAsync(User).Result;
+    [HttpPost]
+    [Route("NewClub")]
+    public async Task<IActionResult> NewClub(ClubViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                // Get user ID (using the correct method)
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userId = userIdClaim?.Value;
 
-//     //         if (userId == null || userObject == null)
-//     //         {
-//     //             ModelState.AddModelError(string.Empty, "Could not get active user");
-//     //             return View(model);
-//     //         }
+                if (string.IsNullOrEmpty(userId))
+                {
+                    ModelState.AddModelError(string.Empty, "Please log in to create a club.");
+                    return View(model);
+                }
 
-//     //         var newClubDto = new CreateClubDto
-//     //         {
-//     //             Name = model.Name,
-//     //             Description = model.Description,
-//     //             OwnerId = userId,
-//     //             Owner = userObject,
-//     //             Image = model.Image
-//     //         };
+                var token = HttpContext.Session.GetString("JwtToken");
 
-//     //         try
-//     //         {
-//     //             var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
-//     //             var response = await httpClient.PostAsJsonAsync("clubs", newClubDto);
+                if (string.IsNullOrEmpty(token))
+                {
+                    ModelState.AddModelError("", "You must be logged in to create a club.");
+                    return View(model);
+                }
 
-//     //             if (response.IsSuccessStatusCode)
-//     //             {
-//     //                 // Redirect to list of clubs after successful creation
-//     //                 return RedirectToAction("Clubs");
-//     //             }
-//     //             else
-//     //             {
-//     //                 ModelState.AddModelError(string.Empty, "Failed to create club via API.");
-//     //             }
-//     //         }
-//     //         catch (HttpRequestException ex)
-//     //         {
-//     //             ModelState.AddModelError(string.Empty, ex.Message);
-//     //         }
-//     //     }
+                var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+                
+                // Create DTO
+                var newClubDto = new CreateClubDto
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    Image = model.Image,
+                    OwnerId = userId,
+                    Events = new List<CreateEventDto>()
+                };
 
-//     //     return View(model);
-//     // }
+                // Make the API call
+                var response = await httpClient.PostAsJsonAsync("clubs", newClubDto);
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"DEBUG: HttpRequestException: {ex.Message}");
+                ModelState.AddModelError(string.Empty, 
+                    $"Cannot connect to API: {ex.Message}. Make sure the API is running.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"DEBUG: Exception: {ex.Message}");
+                Console.WriteLine($"DEBUG: StackTrace: {ex.StackTrace}");
+                ModelState.AddModelError(string.Empty, 
+                    $"Unexpected error: {ex.Message}");
+            }
+        }
+        
+        return View(model);
+    }
 }

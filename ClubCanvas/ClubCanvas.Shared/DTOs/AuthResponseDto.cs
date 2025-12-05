@@ -1,4 +1,4 @@
-namespace ClubCanvas.API.Models;
+namespace ClubCanvas.Shared.DTOs;
 
 public class AuthResponseDto
 {

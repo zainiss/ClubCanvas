@@ -22,6 +22,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
+
             entity.HasMany(e => e.Events).WithOne(e => e.Club).HasForeignKey(e => e.ClubId);
             entity.HasMany(e => e.Members);
             entity.HasOne(e => e.Owner).WithMany(e => e.OwnedClubs).HasForeignKey(entity => entity.OwnerId);

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using ClubCanvas.Core;
 using ClubCanvas.Core.Models;
 using ClubCanvas.web.Models;
+using ClubCanvas.Shared.DTOs;
 
 namespace ClubCanvas.web.Controllers;
 
@@ -12,12 +13,15 @@ public class HomeController : Controller
     private readonly IUserRepository _users;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IHttpClientFactory _httpClientFactory;
 
-    public HomeController(IUserRepository users, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+
+    public HomeController(IHttpClientFactory httpClientFactory, IUserRepository users, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
     {
         _users = users;
         _userManager = userManager;
         _signInManager = signInManager;
+        _httpClientFactory = httpClientFactory;
     }
 
     [Route("")]
@@ -58,24 +62,41 @@ public class HomeController : Controller
     [Route("Login")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
+
+        var response = await httpClient.PostAsJsonAsync("auth/login", new LoginDto {
+            Email = model.Email,
+            Password = model.Password
+        });
+
+        if (!response.IsSuccessStatusCode)
         {
-            // Find user by email
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user != null)
-            {
-                // Verify password and sign in
-                var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: false, lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index");
-                }
-            }
-            
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            ModelState.AddModelError("", "Invalid login attempt.");
+            return View(model);
         }
 
-        return View(model);
+        var authResult = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+
+        // Save JWT to session
+        HttpContext.Session.SetString("JwtToken", authResult.Token);
+        HttpContext.Session.SetString("UserEmail", authResult.Email);
+        HttpContext.Session.SetString("UserId", authResult.UserId);
+
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user != null)
+        {
+            // Verify password and sign in
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: false, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        return RedirectToAction("Index");
     }
     
     [HttpGet]

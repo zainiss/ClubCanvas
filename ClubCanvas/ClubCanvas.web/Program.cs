@@ -7,6 +7,8 @@ using ClubCanvas.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSession();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -60,4 +62,5 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
+app.UseSession();
 app.Run();
