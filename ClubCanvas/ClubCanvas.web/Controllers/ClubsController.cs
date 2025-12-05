@@ -22,54 +22,6 @@ public class ClubsController : Controller
         _userManager = userManager;
     }
 
-    [HttpGet]
-    [Route("TestConnection")]
-    public async Task<IActionResult> TestConnection()
-    {
-        var results = new List<string>();
-        
-        try
-        {
-            var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
-            
-            // Test 1: Try to reach the API base
-            results.Add($"Testing connection to: {httpClient.BaseAddress}");
-            
-            // Test 2: Try a simple GET
-            try
-            {
-                var response = await httpClient.GetAsync("");
-                results.Add($"GET / Response: {(int)response.StatusCode} {response.StatusCode}");
-                
-                if (response.Content != null)
-                {
-                    var content = await response.Content.ReadAsStringAsync();
-                    results.Add($"GET / Content: {content}");
-                }
-            }
-            catch (Exception ex)
-            {
-                results.Add($"GET / Failed: {ex.Message}");
-            }
-            
-            // Test 3: Try the clubs endpoint
-            try
-            {
-                var response = await httpClient.GetAsync("clubs");
-                results.Add($"GET /clubs Response: {(int)response.StatusCode} {response.StatusCode}");
-            }
-            catch (Exception ex)
-            {
-                results.Add($"GET /clubs Failed: {ex.Message}");
-            }
-            
-            return Content(string.Join("\n", results));
-        }
-        catch (Exception ex)
-        {
-            return Content($"Setup failed: {ex.Message}\n\nStack: {ex.StackTrace}");
-        }
-    }
 
     [Route("Clubs")]
     public async Task<IActionResult> Clubs()
@@ -78,8 +30,22 @@ public class ClubsController : Controller
         
         try
         {
-            var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
-            return View(clubs ?? new List<Club>());
+             var clubs = await httpClient.GetFromJsonAsync<List<Club>>("clubs");
+            
+            if (clubs == null)
+            {
+                return NotFound();
+            }
+
+            var dto = clubs.Select(c => new CreateClubDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description,
+                Image = c.Image,
+                OwnerId = c.OwnerId
+            }).ToList();
+            return View(clubs);
         }
         catch (HttpRequestException ex)
         {
@@ -96,18 +62,27 @@ public class ClubsController : Controller
         }
     }
 
+    [HttpGet]
+    [Route("Clubs/ClubDetails/{id:int}")]
     public async Task<IActionResult> ClubDetails(int id)
     {
         var httpClient = _httpClientFactory.CreateClient("ClubCanvasAPI");
         
         try
         {
-            var club = await httpClient.GetFromJsonAsync<Club>($"clubs/{id}");
-            if (club == null)
+            var club = await httpClient.GetFromJsonAsync<Club>($"club/{id}");
+
+            var dto = new CreateClubDto
             {
-                return NotFound();
-            }
-            return View(club);
+                Id = club.Id,
+                Name = club.Name,
+                Description = club.Description,
+                Image = club.Image,
+                OwnerId = club.OwnerId
+            };
+
+            return View(dto);
+            
         }
         catch (HttpRequestException)
         {
